@@ -1,0 +1,62 @@
+<html>
+<head>
+    <title>PDF</title>
+    <meta http-equiv="X-UA-Compatible" content="chrome = 1">
+    <link type="text/css" href="css/main.css" rel="stylesheet" media="screen" />
+    <script type="text/javascript" src="scripts/jquery.js"></script>
+    <script type="text/javascript" src="scripts/pdf.js"></script>
+    <script type="text/javascript" src="scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="scripts/turn.min.js"></script>
+    <script type="text/javascript" src="scripts/tools.js"></script>
+    <script type="text/javascript" src="scripts/lupa.js"></script>
+</head>
+<body>
+
+<script type="text/javascript"
+src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"> </script>
+
+<div id="placeholderr"></div>
+
+
+
+
+    <div id="carga">
+        <embed src="img/5.gif" class="centrar" />
+    </div>
+    
+    <div id="imagen-oculta2" />
+    <header id="botoner">
+        <nav id="botoner-2">
+            <menu>
+                <button>
+                    <img src="img/fi.gif" width="35" height="35" alt="" onclick="previous();">
+                </button>
+            </menu>
+            <menu>
+                <button>
+                    <img src="img/fd.gif" width="35" height="35" alt="" onclick="next();">
+                </button>
+            </menu>
+            <menu>
+                <button>
+                    <img src="img/lupa01.jpg" width="35" height="35" alt="" onclick="if(window.parent.document.body.style.zoom!=0) window.parent.document.body.style.zoom*=1.2; else window.parent.document.body.style.zoom=1.2;">
+                </button>
+            </menu>
+            <menu>
+                <button>
+                    <img src="img/lupa02.jpg" width="35" height="35" alt="" onclick="if(window.parent.document.body.style.zoom!=0) window.parent.document.body.style.zoom*=0.8; else window.parent.document.body.style.zoom=0.8;">
+                </button>
+            </menu>
+        </nav>
+    </header>
+     
+
+<div style="text-align: right;">
+   <embed id="imagen-oculta" src="img/4.gif" />
+</div>
+    
+    <div class="magazine">
+    </div>
+
+</body>
+</html>

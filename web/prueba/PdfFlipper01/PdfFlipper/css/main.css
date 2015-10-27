@@ -1,0 +1,86 @@
+
+
+
+body
+{
+    background: url('/img/001.png');
+    no-repeat: center center fixed;
+    background-size: cover;
+}
+
+.magazine
+{
+    width: 100%;
+    height: 90%;
+}
+.magazine .turn-page
+{
+    background-color: white;
+}
+
+
+.centrar
+{
+    width: 32;
+    height: 32;
+    left: 50%;
+    top: 40%;
+    position: absolute;
+}
+
+#imagen-oculta
+{
+    visibility: hidden;
+}
+
+
+#imagen-oculta2
+{
+    visibility: hidden;
+}
+
+
+#botonera-2
+{
+    border-radius: 3px;
+    width: 100%;
+    height: 80px;
+    margin: 0px;
+    background: linear-gradient(#CCC 0%, #333 100%);
+    background: -moz-linear-gradient(#CCC 0%, #333 100%);
+    background: -ms-linear-gradient(#CCC 0%, #333 100%);
+    background: -o-linear-gradient(#CCC 0%, #333 100%);
+    background: -webkit-linear-gradient(#CCC 0%, #333 100%);
+}
+menu
+{
+    display: inline-block;
+    width: 100px;
+    text-align: center;
+    margin: 10px auto;
+    background: none;
+    color: #fff;
+    font: bold;
+    padding: 10px;
+}
+menu:hover
+{
+    background: -moz-linear-gradient(#FFF 0%, #C4C4C4 100%);
+    background: linear-gradient(#FFF 0%, #DEDEDE 100%);
+    background: -ms-linear-gradient(#FFF 0%, #DEDEDE 100%);
+    background: -o-linear-gradient(#FFF 0%, #DEDEDE 100%);
+    background: -webkit-linear-gradient(#FFF 0%, #DEDEDE 100%);
+    opacity: 0.6;
+    -moz-opacity: 0.6;
+    -o-opacity: 0.6;
+    -webkit-opacity: 0.6;
+    -ms-opacity: 0.6;
+    border-radius: 5px;
+    color: red;
+    box-shadow: 0 0 10px #FFf;
+    -moz-box-shadow: 0 0 10px #FFf;
+    -ms-box-shadow: 0 0 10px #FFf;
+    -o-box-shadow: 0 0 10px #FFf;
+    -webkit-box-shadow: 0 0 10px #FFf;
+}
+
