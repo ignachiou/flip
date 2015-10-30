@@ -1,17 +1,20 @@
 body{
-	overflow:hidden;
-	background-color:#fcfcfc;
+	overflow:auto;
+	background-color:#FFFFFF;
 	margin:0;
 	padding:0;
 }
+
+
 
 .magazine-viewport .container{
 	position:absolute;
 	top:50%;
 	left:50%;
-	width:922px;
-	height:600px;
-	margin:auto;
+	max-width:922px;
+	max-height:600px;	
+	
+	
 }
 
 .magazine-viewport .magazine{
@@ -19,6 +22,7 @@ body{
 	height:600px;
 	left:-461px;
 	top:-300px;
+	
 }
 
 .magazine-viewport .page{
