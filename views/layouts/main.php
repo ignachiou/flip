@@ -2,6 +2,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use yii\bootstrap\Dropdown;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
@@ -32,12 +33,20 @@ AppAsset::register($this);
                     'class' => 'navbar-inverse navbar-fixed-top',
                 ],
             ]);
-            echo Nav::widget([
+            echo nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-left'],
                 'items' => [
                     ['label' => 'Inicio', 'url' => ['/site/index']],
+                		['label' => 'Busqueda', 'items' =>[
+                				['label' => 'Monografias', 'url' => ['/site/index']],
+                				['label' => 'Tesis', 'url' => ['/site/indext']],
+                				['label' => 'Publicaciones Periodicas', 'url' => ['/site/indexp']], 
+                				['label' => 'Articulos', 'url' => ['/site/indexa']],
+                											]                				
+                		],
                     ['label' => 'Acerca de', 'url' => ['/site/about']],
                     ['label' => 'Contactenos', 'url' => ['/site/contact']],
+                	
                 ],
             ]);
             echo Nav::widget([
@@ -64,12 +73,7 @@ AppAsset::register($this);
         </div>
     </div>
 
-    <footer class="footer">
-        <div class="container">
-            <p class="pull-left">&copy; BIBLIOTHECA <?= date('Y') ?></p>
-            <p class="pull-right"><?= Yii::powered() ?></p>
-        </div>
-    </footer>
+    
 
 <?php $this->endBody() ?>
 </body>

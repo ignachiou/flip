@@ -32,6 +32,7 @@ use app\models\FormRevista;
 use app\models\DbRevista;
 use app\models\FormArticulo;
 use app\models\Articulo;
+use app\models\DbArticulo;
 
 
 
@@ -127,15 +128,10 @@ public function actionSimple()
 				$model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
 				*/
 				$query = Objeto::find()
-				->where(["like","id_objeto",$search])
-				->orwhere(["like","nombre",$search])
+				->Where(["like","nombre",$search])
 				->orwhere(["like","autor",$search])
 				->orwhere(["like","editorial",$search])
 				->orwhere(["like","fecha",$search])
-				->orwhere(["like","tema",$search])
-				->orwhere(["like","resumen",$search])
-				->orwhere(["like","lengua",$search])
-				->orwhere(["like","colaborador",$search])
 				->orwhere(["like","desc1",$search])
 				->orwhere(["like","desc2",$search])
 				->orwhere(["like","desc3",$search])
@@ -167,7 +163,171 @@ public function actionSimple()
 		
 		return $this->render("simple",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
 	}
+	
+	public function actionTesis()
+	{
+		/*$table = new Objeto;
+	
+		$model = $table->find()->all();
+		*/
+	
+		$form = new Buscar;
+		$search = null;//guardamos la busqueda realizada en esta variable
+		if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
+		{
+			if ($form->validate())//validamos el campo
+			{
+				$search = Html::encode($form->t); //evita ataques xss
+				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
+					$query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
+					$model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
+				*/
+				$query = Tesis::find()
+				->Where(["like","titulo_tesis",$search])
+				->orwhere(["like","redactor_tesis",$search])
+				->orwhere(["like","tutor_tesis",$search])
+				->orwhere(["like","fecha_tesis",$search])
+				->orwhere(["like","desc1_tesis",$search])
+				->orwhere(["like","desc2_tesis",$search])
+				->orwhere(["like","desc3_tesis",$search])
+				->orwhere(["like","desc4_tesis",$search]);
+				$countQuery = clone $query;
+				$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+				$model = $query->offset($pages->offset)
+				->limit($pages->limit)
+				->all();
+	
+			}
+				
+			else {
+				$form->getErrors();
+	
+			}
+				
+		}
+		else
+		{
+			$query = Tesis::find();
+			$countQuery = clone $query;
+			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+			$model = $query->offset($pages->offset)
+			->limit($pages->limit)
+			->all();
+				
+		}
+	
+		return $this->render("tesis",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
+	}
 
+	public function actionPublicaciones()
+	{
+		/*$table = new Objeto;
+	
+		$model = $table->find()->all();
+		*/
+	
+		$form = new Buscar;
+		$search = null;//guardamos la busqueda realizada en esta variable
+		if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
+		{
+			if ($form->validate())//validamos el campo
+			{
+				$search = Html::encode($form->p); //evita ataques xss
+				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
+				 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
+				 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
+				*/
+				$query = DbRevista::find()
+				->Where(["like","titulo_revista",$search])
+				->orwhere(["like","editorial_revista",$search])
+				->orwhere(["like","issn_revista",$search])
+				->orwhere(["like","fecha_revista",$search])
+				->orwhere(["like","desc1",$search])
+				->orwhere(["like","desc2",$search])
+				->orwhere(["like","desc3",$search])
+				->orwhere(["like","desc4",$search]);
+				$countQuery = clone $query;
+				$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+				$model = $query->offset($pages->offset)
+				->limit($pages->limit)
+				->all();
+	
+			}
+	
+			else {
+				$form->getErrors();
+	
+			}
+	
+		}
+		else
+		{
+			$query = DbRevista::find();
+			$countQuery = clone $query;
+			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+			$model = $query->offset($pages->offset)
+			->limit($pages->limit)
+			->all();
+	
+		}
+	
+		return $this->render("publicaciones",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
+	}
+	
+	public function actionArticulo()
+	{
+		/*$table = new Objeto;
+	
+		$model = $table->find()->all();
+		*/
+	
+		$form = new Buscar;
+		$search = null;//guardamos la busqueda realizada en esta variable
+		if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
+		{
+			if ($form->validate())//validamos el campo
+			{
+				$search = Html::encode($form->a); //evita ataques xss
+				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
+				 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
+				 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
+				*/
+				$query = DbArticulo::find()
+				->Where(["like","titulo_articulo",$search])
+				->orwhere(["like","autor_articulo",$search])
+				->orwhere(["like","desc1",$search])
+				->orwhere(["like","desc2",$search])
+				->orwhere(["like","desc3",$search])
+				->orwhere(["like","desc4",$search]);
+				$countQuery = clone $query;
+				$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+				$model = $query->offset($pages->offset)
+				->limit($pages->limit)
+				->all();
+	
+			}
+	
+			else {
+				$form->getErrors();
+	
+			}
+	
+		}
+		else
+		{
+			$query = DbArticulo::find();
+			$countQuery = clone $query;
+			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+			$model = $query->offset($pages->offset)
+			->limit($pages->limit)
+			->all();
+	
+		}
+	
+		return $this->render("articulo",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
+	}
+	
+	
 public function actionCatalog()
 {
 
@@ -378,7 +538,7 @@ public function actionEliminarusuario()
                 $activar->activate = 1;
                 if ($activar->update())
                 {
-                    echo "Ha sido registrado de manera exitosa";
+                    echo "Ha sido registrado de manera exitosa, Redireccionando";
                     echo "<meta http-equiv='refresh' content='5; ".Url::toRoute("site/login")."'>";
                 }
                 else
@@ -445,7 +605,8 @@ public function actionEliminarusuario()
       
      $subject = "Confirmar registro";
      $body = "<h1>Haga click en el siguiente enlace para finalizar tu registro</h1>";
-     $body .= "<a href='http://biblio.local/index.php?r=site/confirm&id=".$id."&authKey=".$authKey."'>Confirmar</a>";
+     $body .= "Bienvenidos a Bibliotheca, la biblioteca donde se encuentran toda clase de textos, presione el siquiente enlace para finalizar la suscripcion <br>
+     		<a href='http://localhost/flip/web/index.php?r=site/confirm&id=".$id."&authKey=".$authKey."'>Confirmar</a>";
       
      //Enviamos el correo
      Yii::$app->mailer->compose()
@@ -1588,7 +1749,152 @@ public function behaviors() //funcion de control de roles
     	}
         return $this->render('index',['model' => $model, 'form' => $form, 'search' => $search, 'pages' => $pages]);
     }
-
+   
+    public function actionIndexp()
+    {
+    	$form = new Buscar;
+    	$search = null;//guardamos la busqueda realizada en esta variable
+    	if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
+    	{
+    		if ($form->validate())//validamos el campo
+    		{
+    			$search = Html::encode($form->p); //evita ataques xss
+    			/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
+    			 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
+    			 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
+    			*/
+    			$query = DbRevista::find()
+    			->where(["like","titulo_revista",$search])
+    			->orwhere(["like","editorial_revista",$search])
+    			->orwhere(["like","issn_revista",$search])
+    			->orwhere(["like","fecha_revista",$search])
+    			->orwhere(["like","desc1",$search])
+    			->orwhere(["like","desc2",$search])
+    			->orwhere(["like","desc3",$search])
+    			->orwhere(["like","desc4",$search]);
+    			$countQuery = clone $query;
+    			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+    			$model = $query->offset($pages->offset)
+    			->limit($pages->limit)
+    			->all();
+    
+    		}
+    		 
+    		else {
+    			$form->getErrors();
+    
+    		}
+    		 
+    	}
+    	else
+    	{
+    		$query = DbRevista::find();
+    		$countQuery = clone $query;
+    		$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+    		$model = $query->offset($pages->offset)
+    		->limit($pages->limit)
+    		->all();
+    		 
+    	}
+    	return $this->render('indexp',['model' => $model, 'form' => $form, 'search' => $search, 'pages' => $pages]);
+    }
+    
+    public function actionIndext()
+    {
+    	$form = new Buscar;
+    	$search = null;//guardamos la busqueda realizada en esta variable
+    	if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
+    	{
+    		if ($form->validate())//validamos el campo
+    		{
+    			$search = Html::encode($form->t); //evita ataques xss
+    			/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
+    			 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
+    			 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
+    			*/
+    			$query = Tesis::find()
+    			->where(["like","titulo_tesis",$search])
+    			->orwhere(["like","redactor_tesis",$search])
+    			->orwhere(["like","tutor_tesis",$search])
+    			->orwhere(["like","fecha_tesis",$search])
+    			->orwhere(["like","desc1_tesis",$search])
+    			->orwhere(["like","desc2_tesis",$search])
+    			->orwhere(["like","desc3_tesis",$search])
+    			->orwhere(["like","desc4_tesis",$search]);
+    			$countQuery = clone $query;
+    			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+    			$model = $query->offset($pages->offset)
+    			->limit($pages->limit)
+    			->all();
+    
+    		}
+    		 
+    		else {
+    			$form->getErrors();
+    
+    		}
+    		 
+    	}
+    	else
+    	{
+    		$query = Tesis::find();
+    		$countQuery = clone $query;
+    		$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+    		$model = $query->offset($pages->offset)
+    		->limit($pages->limit)
+    		->all();
+    		 
+    	}
+    	return $this->render('indext',['model' => $model, 'form' => $form, 'search' => $search, 'pages' => $pages]);
+    }
+    
+    public function actionIndexa()
+    {
+    	$form = new Buscar;
+    	$search = null;//guardamos la busqueda realizada en esta variable
+    	if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
+    	{
+    		if ($form->validate())//validamos el campo
+    		{
+    			$search = Html::encode($form->a); //evita ataques xss
+    			/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
+    			 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
+    			 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
+    			*/
+    			$query = DbArticulo::find()
+    			->where(["like","titulo_articulo",$search])
+    			->orwhere(["like","autor_articulo",$search])
+    			->orwhere(["like","desc1",$search])
+    			->orwhere(["like","desc2",$search])
+    			->orwhere(["like","desc3",$search])
+    			->orwhere(["like","desc4",$search]);
+    			$countQuery = clone $query;
+    			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+    			$model = $query->offset($pages->offset)
+    			->limit($pages->limit)
+    			->all();
+    
+    		}
+    		 
+    		else {
+    			$form->getErrors();
+    
+    		}
+    		 
+    	}
+    	else
+    	{
+    		$query = DbArticulo::find();
+    		$countQuery = clone $query;
+    		$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
+    		$model = $query->offset($pages->offset)
+    		->limit($pages->limit)
+    		->all();
+    		 
+    	}
+    	return $this->render('indexa',['model' => $model, 'form' => $form, 'search' => $search, 'pages' => $pages]);
+    }
+    
     public function actionLogin()
     	{
     		if (!\Yii::$app->user->isGuest) {

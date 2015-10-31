@@ -4,7 +4,7 @@ use Yii;
 use yii\base\model;
 
 class Buscar extends model{
-	public $q, $m, $t, $p;
+	public $q, $m, $t, $p, $a;
 	
 	public function rules()
 	{		
@@ -13,6 +13,7 @@ class Buscar extends model{
 				["m", "match", "pattern" =>  '/^[0-9a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras y numeros'],
 				["t", "match", "pattern" =>  '/^[0-9a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras y numeros'],
 				["p", "match", "pattern" =>  '/^[0-9a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras y numeros'],
+				["a", "match", "pattern" =>  '/^[0-9a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras y numeros'],
 								
 		];		
 	}
@@ -23,7 +24,8 @@ class Buscar extends model{
 			'q' => "Buscar:", //esto aparece en index
 			'm' => "Buscar Monografia:",
 			't' => "Buscar Tesis:",
-			'p'	=> "Buscar Publicacion Periodica:"
+			'p'	=> "Buscar Publicacion Periodica:",
+			'a'	=> "Buscar Articulos:"
 				
 		];		
 	}

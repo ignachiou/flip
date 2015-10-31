@@ -57,60 +57,66 @@ if (is_dir($path)){
 	?>
 
 <div id="canvas">
-
+<font color="white">sdfsd</font>
 <div class="zoom-icon zoom-icon-in"></div>
 
-<div class="magazine-viewport">
-	<div class="container">
+<div class="magazine-viewport" style="position: absolute; left:117px; top:-39px; background-color:#ffffff;  width:100%; height:100%;" >
+
+<div class="container">
+	<font color="black">sdfsddsdfsdf</font>
 		<div class="magazine">
 			<!-- Next button -->
 			<div ignore="1" class="next-button"></div>
 			<!-- Previous button -->
 			<div ignore="1" class="previous-button"></div>
 		</div>
-	</div>
+	</div>	
+</div>
 </div>
 
 <div id="contenedorNegro" style="background-color:#000; width:230px; position: absolute; top: 50px; left:0px; height: 595px;">
-  <div id="contenedorBiblio" style="background-color:#aaaaaa;  position: absolute; top:0px; left:0px; height: 300px; width:230px;">
+
+  <div id="contenedorBiblio" style="background-color:#aaaaaa;  position: absolute; top:315px; left:0px; height: 300px; width:230px;">
   	<div id="titlePageBiblio" style="background-color:#2E2E2E; height: 30px;">
-			<font color="black">Bibliografia</font>
+			<font color="white">Bibliografia</font>
 		</div>
   	
   </div>
-  <div id="contenedorPages" style="background-color:#aaaaaa;  position: absolute; top:315px; left:0px; height: 300px; width:230px;">
+  <div id="contenedorPages" style="background-color:#aaaaaa;  position: absolute; top:0px; left:0px; height: 300px; width:230px;">
 	<div id="titlePageBox">
 		<div id="titlePageHeader" style="background-color:#2E2E2E; height: 30px;">
-			<font color="black">P&aacute;ginas</font>
+			<font color="white">P&aacute;ginas</font>
 		</div>
 			
 			<div id="pageListDiv" style="position: absolute; left:5px; top: 40px; bottom: 30px; height: 200px; overflow: auto; background-color: #ffffff;
-			border: solid 1px #628352">
+			border: solid 1px rgb(98, 131, 82); blackground-color: rgb(255, 255, 255);">
 				<table cellpadding="1" id="pageListTable" cellspacing="0" border="0" width="200px">
-				
+					<tbody>
 						<?php 
 						for($i=0; $i<$total; $i++)
 						{							
 						?>
 						<tr>						
-							<td style="width: 200px" bgcolor="#FFFFFF" onmouseover="this.style.cursor='pointer';" onclick="setDisplayParams(1, this, 1416711)">
+							<td style="width: 200px; cursor: pointer"; bgcolor="#ece9d8" onmouseover="this.style.cursor='pointer';" onclick="setDisplayParams(<?php echo $i+1;?>, this, <?php echo $i+1;?>)">
 								P&aacute;gina <?php echo $i+1;?>
+							</td>
+							<td style="display: none; width: 0px">
+								2456574
 							</td>							
 						</tr>	
 						<?php 
 							}
-							?>						
+							?>	
+					</tbody>					
 				</table>
 			
 			</div>
 	
 			<div style="position: absolute; left: 10px; bottom: 5px; font-size: 11px; width: 200px;">
-				Link to this page:<br />
-				<a id="pageLink" style="font-size: 11px;"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				Enlace a la imagen:<br />
+				<a id="pageLink" style="font-size: 11px;" href="imagenes/monografias/19/2.jpg">imagenes/monografias/19/1.jpg</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		</div>
 		
-		<a href="javascript:toggleViewerVisible()" id="hypOcrText" style="position: absolute; right: 10px; bottom: 20px;">View Text</a>
-
 	</div>
   </div>
 </div>
@@ -714,7 +720,7 @@ function loadApp() {
 
 	// URIs - Format #/page/1 
 
-	Hash.on('^page\/([0-9]*)$', {
+	Hash.on('<?php  echo $path?>/([0-9]*)$', {
 		yep: function(path, parts) {
 			var page = parts[1];
 

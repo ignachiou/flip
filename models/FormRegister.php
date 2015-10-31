@@ -7,6 +7,7 @@ use app\models\Usuarios;
 
 class FormRegister extends model{
 	
+	public $id;
     public $usuario;
     public $email;
     public $clave;

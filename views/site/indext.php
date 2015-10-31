@@ -20,13 +20,13 @@ $this->title = 'Bibliotheca';
         
         <?php $f = ActiveForm::begin([  
 		"method" => "get",
-		"action" => Url::toRoute("site/simple"),
+		"action" => Url::toRoute("site/tesis"),
 		"enableClientValidation" => true,
 ]);
 ?>
    	       
     <div class="form-group">
-	<?= $f->field($form, "m")->input("buscar")?> 
+	<?= $f->field($form, "t")->input("buscar")?> 
 	</div>
 
 <?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>

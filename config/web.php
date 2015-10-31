@@ -29,9 +29,9 @@ $config = [
             'useFileTransport' => false,
         		'transport' => [
         			'class'=> 'Swift_SmtpTransport',
-        			'host' => 'smtp.gmail.com',
+        			'host' => 'smtp.mandrillapp.com',
         			'username' => 'salvador.ignacio.salvatierra@gmail.com',
-        			'password' => 'daniela19890327',
+        			'password' => 'lmsREZ4U5ICbxjqK-vii-g',
         			'port' => '587',
         			'encryption' => 'tls',		
         				
