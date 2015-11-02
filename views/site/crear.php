@@ -41,18 +41,10 @@ use yii\helpers\Url;
  <?= $form->field($model, "fecha")->input("text") ?>   
 </div>
 
-<div class="form-group">
- <?= $form->field($model, "tema")->input("text") ?>   
-</div>
 
 <div class="form-group">
  <?= $form->field($model, "resumen")->textarea(['rows'=>4]) ?>   
 </div>
-
-<div class="form-group">
- <?= $form->field($model, "lengua")->input("text") ?>   
-</div>
-
 
 <div class="form-group">
  <?= $form->field($model, "isbn")->input("text") ?>   

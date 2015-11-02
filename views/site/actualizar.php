@@ -36,6 +36,14 @@ use yii\helpers\Url;
 </div>
 
 <div class="form-group">
+ <?= $form->field($model, "isbn")->input("text") ?>   
+</div>
+
+<div class="form-group">
+ <?= $form->field($model, "resumen")->input("text") ?>   
+</div>
+
+<div class="form-group">
  <?= $form->field($model, "descriptor_a")->input("text") ?>   
 </div>
 

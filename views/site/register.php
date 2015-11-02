@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-?>
+?> 
 
 <h3><?= $msg ?></h3>
 

@@ -800,7 +800,7 @@ public function actionEliminarusuario()
  	{
  		return $this->redirect(["site/registrostesis"]);
  	}
- 	return $this->render("", ["model" => $model, "msg" => $msg]);
+ 	return $this->render("actualizartesis", ["model" => $model, "msg" => $msg]);
  }
  
 public function actionActualizar()
@@ -815,18 +815,20 @@ public function actionActualizar()
  			$table = Objeto::findOne($model->id_objeto);
  			if($table)
  			{
- 				$table->id_objeto = $model->id_objeto;
  				$table->nombre = $model->nombre_objeto_bibliografico;
-				$table->autor = $model->autor;
-				$table->editorial = $model->editorial;
-				$table->fecha = $model->fecha; 			
-				$table->desc1 = $model->descriptor_a;
-				$table->desc2 = $model->descriptor_b;
-				$table->desc3 = $model->descriptor_c;
-				$table->desc4 = $model->descriptor_d;
+ 				$table->autor = $model->autor;
+ 				$table->editorial = $model->editorial;
+ 				$table->fecha = $model->fecha;
+ 				$table->isbn = $model->isbn;
+ 				$table->resumen = $model->resumen;
+ 				$table->desc1 = $model->descriptor_a;
+ 				$table->desc2 = $model->descriptor_b;
+ 				$table->desc3 = $model->descriptor_c;
+ 				$table->desc4 = $model->descriptor_d;
  				if ($table->update())
  				{
  					$msg = "La Monografia ha sido actualizado correctamente";
+ 					return $this->redirect(["site/registros"]);
  				}
  				else
  				{
@@ -855,8 +857,11 @@ public function actionActualizar()
  			{
  				$model->id_objeto = $table->id_objeto;
  				$model->nombre_objeto_bibliografico= $table->nombre;
- 				$model->editorial = $table->editorial;
  				$model->autor = $table->autor;
+ 				$model->editorial = $table->editorial;
+ 				$model->fecha = $table->fecha;
+ 				$model->isbn = $table->isbn;
+ 				$model->resumen = $table->resumen;
  				$model->descriptor_a = $table->desc1;
  				$model->descriptor_b = $table->desc2;
  				$model->descriptor_c = $table->desc3;
@@ -866,17 +871,20 @@ public function actionActualizar()
  			}
  			else
  			{
- 				return $this->redirect(["site/registros"]);
+ 				$msj = "No se realizo ninguna clase de actualizacion";
+ 				return $this->redirect(["site/actualizar"]);
  			}
  		}
  		else
  		{
- 			return $this->redirect(["site/registros"]);
+ 			$msj = "No se realizo ninguna clase de actualizacion";
+ 			return $this->redirect(["site/actualizar"]);
  		}
  	}
  	else
  	{
- 		return $this->redirect(["site/registros"]);
+ 		$msj = "No se realizo ninguna clase de actualizacion";
+ 		return $this->redirect(["site/actualizar"]);
  	}
  	return $this->render("actualizar", ["model" => $model, "msg" => $msg]);
  }
@@ -997,11 +1005,11 @@ public function actionActualizar()
 					
 					
 					{
-						foreach (glob("C:/xampp/htdocs/basic/web/imagenes/monografias/".$id_objeto."/*.*") as $archivos_carpeta)
+						foreach (glob("imagenes/monografias/".$id_objeto."/*.*") as $archivos_carpeta)
 						{
 							unlink($archivos_carpeta); //eliminamos todos los archivos dentro de la carpeta							
 						}
-						rmdir("C:/xampp/htdocs/basic/web/imagenes/monografias/".$id_objeto); //eliminamos la carpeta.
+						rmdir("imagenes/monografias/".$id_objeto); //eliminamos la carpeta.
 					
 					}
 				}
@@ -1109,7 +1117,7 @@ public function actionActualizar()
 				->orwhere(["like","tutor_tesis",$search])
 				->orwhere(["like","cotutor_tesis",$search])
 				->orwhere(["like","fecha_tesis",$search])
-				//->orwhere(["like","universidad_tesis",$search])
+				->orwhere(["like","universidad",$search])
 				->orwhere(["like","resumen_tesis",$search])
 				->orwhere(["like","desc1_tesis",$search])
 				->orwhere(["like","desc2_tesis",$search])
@@ -1360,20 +1368,20 @@ public function actionActualizar()
 	
 	
 	
-					if (!is_dir('C:/xampp/htdocs/basic/web/imagenes/revista/'.$id))  // creo directorios dentro de imagenes con la id
+					if (!is_dir('imagenes/revista/'.$id))  // creo directorios dentro de imagenes con la id
 						{													// del OB donde guardare las imagenes.
 							
-						mkdir('C:/xampp/htdocs/basic/web/imagenes/revista/'.$id, 777);//le otorgo permiso de lectura y escritura
+						mkdir('imagenes/revista/'.$id, 777);//le otorgo permiso de lectura y escritura
 							
 	
 						}
 	
-						if($model->img && is_dir('C:/xampp/htdocs/basic/web/imagenes/revista/'.$id))
+						if($model->img && is_dir('imagenes/revista/'.$id))
 						{ //pendiente error al validar el modelo de las imagenes
 							
 						foreach ($model->img as $img)
 						{
-						$img->saveAs('C:/xampp/htdocs/basic/web/imagenes/revista/'.$id."/". $img->baseName . '.' . $img->extension);
+						$img->saveAs('imagenes/revista/'.$id."/". $img->baseName . '.' . $img->extension);
 						//$msg = "<p><strong class='label label-info'>subida de archivos lograda con exito</strong></p>";
 						}
 							
@@ -1421,6 +1429,7 @@ public function actionActualizar()
 				$table->tutor_tesis = $model->tutor;
 				$table->cotutor_tesis = $model->cotutor;				
 				$table->fecha_tesis = $model->fecha_de_publicacion;
+				$table->universidad = $model->universidad;
 				$table->resumen_tesis = $model->resumen;
 				$table->url = 'C:/xampp/htdocs/basic/web/imagenes/tesis/';
 				$table->desc1_tesis = $model->descriptor1_tesis;
@@ -1451,20 +1460,20 @@ public function actionActualizar()
 						
 						
 						
-					if (!is_dir('C:/xampp/htdocs/basic/web/imagenes/tesis/'.$id))  // creo directorios dentro de imagenes con la id
+					if (!is_dir('imagenes/tesis/'.$id))  // creo directorios dentro de imagenes con la id
 					{													// del OB donde guardare las imagenes.
 					
-					mkdir('C:/xampp/htdocs/basic/web/imagenes/tesis/'.$id, 777);//le otorgo permiso de lectura y escritura
+					mkdir('imagenes/tesis/'.$id, 777);//le otorgo permiso de lectura y escritura
 				
 											
 					}
 					
-					if($model->img && is_dir('C:/xampp/htdocs/basic/web/imagenes/tesis/'.$id))
+					if($model->img && is_dir('imagenes/tesis/'.$id))
 					{ //pendiente error al validar el modelo de las imagenes
 					
 						foreach ($model->img as $img)
 						{
-							$img->saveAs('C:/xampp/htdocs/basic/web/imagenes/tesis/'.$id."/". $img->baseName . '.' . $img->extension);
+							$img->saveAs('imagenes/tesis/'.$id."/". $img->baseName . '.' . $img->extension);
 							//$msg = "<p><strong class='label label-info'>subida de archivos lograda con exito</strong></p>";
 							
 							
@@ -1512,10 +1521,7 @@ public function actionActualizar()
 				$table->nombre = $model->nombre_objeto_bibliografico;
 				$table->autor = $model->autor;
 				$table->editorial = $model->editorial;
-				$table->fecha = $model->fecha; 			
-				//$table->colaborador = $model->colaborador;
-				$table->lengua = $model->lengua;
-				$table->tema = $model->tema;
+				$table->fecha = $model->fecha; 
 				$table->resumen = $model->resumen;
 				$table->url = 'imagenes/monografias/';
 				$table->isbn = $model->isbn;
@@ -1535,10 +1541,7 @@ public function actionActualizar()
 					$model-> autor = null;
 					$model-> editorial = null;
 					$model-> fecha = null;
-					$model-> tema = null;
-					$model-> resumen = null;
-					$model-> lengua = null;
-					//$model-> colaborador = null;
+					$model-> resumen = null;					
 					$model->isbn = null;
 					$model-> descriptor_a = null;
 					$model-> descriptor_b = null;
@@ -1910,7 +1913,7 @@ public function behaviors() //funcion de control de roles
 				}
 				else
 				{
- 					return $this->redirect(["site/simple"]);
+ 					return $this->redirect(["site/index"]);
 				}
      	}
 
@@ -1927,7 +1930,7 @@ public function behaviors() //funcion de control de roles
 			}
 			else
 			{
- 				return $this->redirect(["site/simple"]);
+ 				return $this->redirect(["site/index"]);
 			}
 
      		} else {

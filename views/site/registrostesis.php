@@ -34,6 +34,7 @@ use yii\widgets\LinkPager;
 		<th>Redactor de la Tesis</th>
 		<th>Tutor de la Tesis</th>
 		<th>Fecha de Publicacion</th>
+		<th>Universidad</th>
 		<th></th>
 		<th></th>
 									
@@ -45,6 +46,7 @@ use yii\widgets\LinkPager;
 		<td><?= $row->redactor_tesis?></td>
 		<td><?= $row->tutor_tesis?></td>
 		<td><?= $row->fecha_tesis?></td>
+		<td><?= $row->universidad?></td>
 		<td><a href= "<?= Url::toRoute(["site/actualizartesis", "id_tesis" => $row->id_tesis]) ?>">Editar</a></td>
 		<td>
             <a href="#" data-toggle="modal" data-target="#id_tesis_<?= $row->id_tesis ?>">Eliminar</a>

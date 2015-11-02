@@ -36,6 +36,10 @@ use yii\helpers\Url;
 </div>
 
 <div class="form-group">
+ <?= $form->field($model, "universidad")->input("text") ?>   
+</div>
+
+<div class="form-group">
  <?= $form->field($model, "fecha_de_publicacion")->input("text") ?>   
 </div>
 

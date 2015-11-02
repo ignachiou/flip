@@ -11,10 +11,7 @@ public $nombre_objeto_bibliografico;
 public $autor;
 public $editorial;
 public $fecha;
-public $lengua;
-public $colaborador;
 public $resumen;
-public $tema;
 public $img;
 public $url;
 public $isbn;
@@ -40,13 +37,7 @@ public function rules()
    ['editorial', 'match', 'pattern' => '/^.{3,80}$/', 'message' => 'Mínimo 3 máximo 80 caracteres'],
    ['fecha', 'required', 'message' => 'Campo requerido'],
    ['fecha', 'match', 'pattern' => '/^[0-9\s]+$/i', 'message' => 'solo se aceptan numeros'],
-   ['fecha', 'match', 'pattern' => '/^.{1,5}$/', 'message' => 'Mínimo 1 máximo 5 caracteres'],
-   ['lengua', 'required', 'message' => 'Campo requerido'],
-   ['lengua', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
-   ['lengua', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],
-   ['tema', 'required', 'message' => 'Campo requerido'],
-   ['tema', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
-   ['tema', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],
+   ['fecha', 'match', 'pattern' => '/^.{1,5}$/', 'message' => 'Mínimo 1 máximo 5 caracteres'],   
    ['resumen', 'required', 'message' => 'Campo requerido'],
    ['resumen', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
    ['resumen', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],

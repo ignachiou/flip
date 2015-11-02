@@ -22,13 +22,33 @@ $this->title = 'Bibliotheca';
 		"method" => "get",
 		"action" => Url::toRoute("site/simple"),
 		"enableClientValidation" => true,
-]);
-?>
+		]);
+		?>
+		
+		<?php $q = ActiveForm::begin([  
+		"method" => "get",
+		"action" => Url::toRoute("site/tesis"),
+		"enableClientValidation" => true,
+		]);
+		?>
+		<?php $a = ActiveForm::begin([  
+		"method" => "get",
+		"action" => Url::toRoute("site/publicaciones"),
+		"enableClientValidation" => true,
+		]);
+		?>
    	       
     <div class="form-group">
 	<?= $f->field($form, "m")->input("buscar")?> 
 	</div>
-
+	<div class="form-group">
+	<?= $q->field($form, "t")->input("buscar")?> 
+	</div>
+	<div class="form-group">
+	<?= $a->field($form, "p")->input("buscar")?> 
+	</div>
+	
+	
 <?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
 
 <?php $f->end() ?>

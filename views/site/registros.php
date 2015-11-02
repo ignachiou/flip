@@ -54,16 +54,16 @@ use yii\widgets\LinkPager;
                             <div class="modal-content">
                               <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                    <h4 class="modal-title">Eliminar Tesis</h4>
+                                    <h4 class="modal-title">Eliminar Monografias</h4>
                               </div>
                               <div class="modal-body">
-                                    <p>¿Realmente deseas eliminar la tesis con ID <?= $row->id_objeto ?>?</p>
+                                    <p>Realmente deseas eliminar la Monografia "<?= $row->nombre ?>" con ID <?= $row->id_objeto ?>?</p>
                               </div>
                               <div class="modal-footer">
                               <?= Html::beginForm(Url::toRoute("site/eliminar"), "POST") ?>
                                     <input type="hidden" name="id_objeto" value="<?= $row->id_objeto ?>">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Eliminar</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
                               <?= Html::endForm() ?>
                               </div>
                             </div><!-- /.modal-content -->
