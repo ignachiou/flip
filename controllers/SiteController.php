@@ -738,6 +738,7 @@ public function actionEliminarusuario()
  				$table->tutor_tesis = $model->tutor;
  				$table->cotutor_tesis = $model->cotutor;
  				$table->fecha_tesis = $model->fecha_de_publicacion;
+ 				$table->universidad = $model->universidad;
  				$table->resumen_tesis = $model->resumen;
  				$table->desc1_tesis = $model->descriptor1_tesis;
  				$table->desc2_tesis = $model->descriptor2_tesis;
@@ -745,7 +746,8 @@ public function actionEliminarusuario()
  				$table->desc4_tesis = $model->descriptor4_tesis;
  				if ($table->update())
  				{
- 					$msg = "La Tesis ha sido actualizado correctamente";
+ 					$msg = "La Tesis ha sido actualizada correctamente";
+ 					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrostesis")."'>";
  				}
  				else
  				{
@@ -778,6 +780,7 @@ public function actionEliminarusuario()
  				$model->tutor = $table->tutor_tesis;
  				$model->cotutor = $table->cotutor_tesis;
  				$model->fecha_de_publicacion = $table->fecha_tesis;
+ 				$model->universidad = $table->universidad;
  				$model->resumen = $table->resumen_tesis;
  				$model->descriptor1_tesis = $table->desc1_tesis;
  				$model->descriptor2_tesis = $table->desc2_tesis;
@@ -828,7 +831,7 @@ public function actionActualizar()
  				if ($table->update())
  				{
  					$msg = "La Monografia ha sido actualizado correctamente";
- 					return $this->redirect(["site/registros"]);
+ 					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registros")."'>";
  				}
  				else
  				{
@@ -907,11 +910,11 @@ public function actionActualizar()
 	
 	
 					{
-						foreach (glob("C:/xampp/htdocs/basic/web/imagenes/revista/".$id_revista."/*.*") as $archivos_carpeta)
+						foreach (glob("imagenes/revista/".$id_revista."/*.*") as $archivos_carpeta)
 						{
 							unlink($archivos_carpeta); //eliminamos todos los archivos dentro de la carpeta
 						}
-						rmdir("C:/xampp/htdocs/basic/web/imagenes/revista/".$id_revista); //eliminamos la carpeta.
+						rmdir("imagenes/revista/".$id_revista); //eliminamos la carpeta.
 							
 					}
 				}
@@ -956,11 +959,11 @@ public function actionActualizar()
 						
 						
 					{
-						foreach (glob("C:/xampp/htdocs/basic/imagenes/tesis/".$id_tesis."/*.*") as $archivos_carpeta)
+						foreach (glob("imagenes/tesis/".$id_tesis."/*.*") as $archivos_carpeta)
 						{
 							unlink($archivos_carpeta); //eliminamos todos los archivos dentro de la carpeta
 						}
-						rmdir("C:/xampp/htdocs/basic/imagenes/tesis/".$id_tesis); //eliminamos la carpeta.
+						rmdir("imagenes/tesis/".$id_tesis); //eliminamos la carpeta.
 							
 					}
 				}
@@ -1335,7 +1338,7 @@ public function actionActualizar()
 				$table->serie_revista = $model->serie;
 				$table->fecha_revista= $model->fecha_de_publicacion;
 				$table->issn_revista = $model->issn;
-				$table->url_revista = 'C:/xampp/htdocs/basic/imagenes/revista/';
+				$table->url_revista = 'imagenes/revista/';
 				$table->distribucion_revista = $model->distribucion;
 				$table->volumen_revista = $model->volumen;
 				$table->periodicidad_revista = $model->periodicidad;
@@ -1431,7 +1434,7 @@ public function actionActualizar()
 				$table->fecha_tesis = $model->fecha_de_publicacion;
 				$table->universidad = $model->universidad;
 				$table->resumen_tesis = $model->resumen;
-				$table->url = 'C:/xampp/htdocs/basic/web/imagenes/tesis/';
+				$table->url = 'imagenes/tesis/';
 				$table->desc1_tesis = $model->descriptor1_tesis;
 				$table->desc2_tesis = $model->descriptor2_tesis;
 				$table->desc3_tesis = $model->descriptor3_tesis;
@@ -1551,20 +1554,20 @@ public function actionActualizar()
 					
 					
 					
-					if (!is_dir('C:/xampp/htdocs/basic/web/imagenes/monografias/'.$id))  // creo directorios dentro de imagenes con la id
+					if (!is_dir('imagenes/monografias/'.$id))  // creo directorios dentro de imagenes con la id
 					{													// del OB donde guardare las imagenes.
 					
-					mkdir('C:/xampp/htdocs/basic/web/imagenes/monografias/'.$id, 777);//le otorgo permiso de lectura y escritura
+					mkdir('imagenes/monografias/'.$id, 777);//le otorgo permiso de lectura y escritura
 				
 											
 					}
 					
-					if($model->img && is_dir('C:/xampp/htdocs/basic/web/imagenes/monografias/'.$id))
+					if($model->img && is_dir('imagenes/monografias/'.$id))
 					{ //pendiente error al validar el modelo de las imagenes
 					
 						foreach ($model->img as $img)
 						{
-							$img->saveAs('C:/xampp/htdocs/basic/web/imagenes/monografias/'.$id."/". $img->baseName . '.' . $img->extension);
+							$img->saveAs('imagenes/monografias/'.$id."/". $img->baseName . '.' . $img->extension);
 							//$msg = "<p><strong class='label label-info'>subida de archivos lograda con exito</strong></p>";
 							
 							
