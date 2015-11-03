@@ -6,8 +6,6 @@ use yii\data\Pagination;
 use yii\widgets\LinkPager;
 ?>
 
-<a href="<?= URL::toRoute("site/creartesis")?>">Crear un nuevo registro de una tesis</a>
-
 <?php $f = ActiveForm::begin([
 		"method" => "get",
 		"action" => Url::toRoute("site/registrostesis"),
@@ -20,6 +18,7 @@ use yii\widgets\LinkPager;
 </div>
 
 <?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
+<?= Html::a("Crear Tesis",'index.php?r=site%2Fcreartesis',["class" => "btn btn-success"])?>
 
 <?php $f->end() ?>
 
@@ -47,9 +46,9 @@ use yii\widgets\LinkPager;
 		<td><?= $row->tutor_tesis?></td>
 		<td><?= $row->fecha_tesis?></td>
 		<td><?= $row->universidad?></td>
-		<td><a href= "<?= Url::toRoute(["site/actualizartesis", "id_tesis" => $row->id_tesis]) ?>">Editar</a></td>
+		<td><a href= "<?= Url::toRoute(["site/actualizartesis", "id_tesis" => $row->id_tesis]) ?>"><?=Html::submitButton("Actualizar", ["class" => "btn btn-warning"])?></a></td>
 		<td>
-            <a href="#" data-toggle="modal" data-target="#id_tesis_<?= $row->id_tesis ?>">Eliminar</a>
+            <a href="#" data-toggle="modal" data-target="#id_tesis_<?= $row->id_tesis ?>"><?=Html::submitButton("Eliminar", ["class" => "btn btn-danger"])?></a>
             <div class="modal fade" role="dialog" aria-hidden="true" id="id_tesis_<?= $row->id_tesis ?>">
                       <div class="modal-dialog">
                             <div class="modal-content">

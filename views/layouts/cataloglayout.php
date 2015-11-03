@@ -57,8 +57,6 @@ AppAsset::register($this);
             						['label' => 'Catalogar Publicaciones', 'url' => ['/revista/create']],
             ]],
             				
-            				['label' => 'Control Usuarios', 'url' => ['/site/admin']            						
-            				],
             				
             				Yii::$app->user->isGuest ?
             				['label' => 'Ingresar', 'url' => ['/site/login']] :

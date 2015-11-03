@@ -51,6 +51,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
     		return false;
     	}
     }
+    
 
     public static function findIdentity($id)
     {

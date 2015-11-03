@@ -51,15 +51,7 @@ AppAsset::register($this);
             echo Nav::widget([
             		'options' => ['class' => 'navbar-nav navbar-right'],
             		'items' => [
-            				['label' => 'Catalogar', 'items' =>[
-            						['label' => 'Catalogar Monografias', 'url' => ['/site/crear']],
-            						['label' => 'Catalogar Tesis', 'url' => ['/site/creartesis']],
-            						['label' => 'Catalogar Publicaciones', 'url' => ['/revista/create']],
-            ]],
-            				
-            				['label' => 'Control Usuarios', 'url' => ['/site/admin']            						
-            				],
-            				
+            				          				
             				Yii::$app->user->isGuest ?
             				['label' => 'Ingresar', 'url' => ['/site/login']] :
             				['label' => 'Salir (' . Yii::$app->user->identity->usuario . ')',

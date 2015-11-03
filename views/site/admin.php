@@ -43,9 +43,9 @@ use yii\widgets\LinkPager;
 		<td><?= $row->usuario?></td>
 		<td><?= $row->email?></td>
 		<td><?= $row->rol?></td>
-		<td><a href= "<?= Url::toRoute(["site/actualizarusuario", "id" => $row->id]) ?>">Editar</a></td>
+		<td><a href= "<?= Url::toRoute(["site/actualizarusuario", "id" => $row->id]) ?>"><?= Html::submitButton("Editar", ["class" => "btn btn-warning"])?></a></td>
 		<td>
-            <a href="#" data-toggle="modal" data-target="#id<?= $row->id ?>">Eliminar</a>
+            <a href="#" data-toggle="modal" data-target="#id<?= $row->id ?>"><?= Html::submitButton("Eliminar", ["class" => "btn btn-danger"])?></a>
             <div class="modal fade" role="dialog" aria-hidden="true" id="id<?= $row->id ?>">
                       <div class="modal-dialog">
                             <div class="modal-content">

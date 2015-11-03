@@ -6,9 +6,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Revista */
 
-$this->title = 'Create Revista';
-$this->params['breadcrumbs'][] = ['label' => 'Revistas', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Crear Publicacion';
+
+
 ?>
 <div class="revista-create">
 

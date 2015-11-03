@@ -6,7 +6,7 @@ use yii\data\Pagination;
 use yii\widgets\LinkPager;
 ?>
 
-<a href="<?= URL::toRoute("site/crear")?>">Crear un nuevo registro de una monografia</a>
+
 
 <?php $f = ActiveForm::begin([
 		"method" => "get",
@@ -20,6 +20,8 @@ use yii\widgets\LinkPager;
 </div>
 
 <?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
+<?= Html::a("Crear Monografia",'index.php?r=site%2Fcrear',["class" => "btn btn-success"])?>
+
 
 <?php $f->end() ?>
 
@@ -46,9 +48,9 @@ use yii\widgets\LinkPager;
 		<td><?= $row->autor?></td>
 		<td><?= $row->editorial?></td>
 		<td><?= $row->fecha?></td>
-		<td><a href= "<?= Url::toRoute(["site/actualizar", "id_objeto" => $row->id_objeto]) ?>">Editar</a></td>
+		<td><a href= "<?= Url::toRoute(["site/actualizar", "id_objeto" => $row->id_objeto]) ?>"><?= Html::submitButton("Actualizar", ["class" => "btn btn-warning"])?></a></td>
 		<td>
-            <a href="#" data-toggle="modal" data-target="#id_objeto_<?= $row->id_objeto ?>">Eliminar</a>
+            <a href="#" data-toggle="modal" data-target="#id_objeto_<?= $row->id_objeto ?>"><?=Html::submitButton("Eliminar", ["class" => "btn btn-danger"])?></a>
             <div class="modal fade" role="dialog" aria-hidden="true" id="id_objeto_<?= $row->id_objeto ?>">
                       <div class="modal-dialog">
                             <div class="modal-content">

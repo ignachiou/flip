@@ -38,14 +38,33 @@ use app\models\DbArticulo;
 
 class SiteController extends Controller
 {
-	//lo siguiente corresponde al control de 
-	//usuarios donde 1 es el mas simple y 3 
-	//el mayor rango
+		
+	function init(){	                    //en esta funcion defino los distintos layout dependiendo del rol del usuario
+		
+			if (!\Yii::$app->user->isGuest) {
+					
+				if(User::isUserSimple(Yii::$app->user->identity->id)){
+					$this->layout = 'simplelayout';
+			}
+			
+			if(User::isUserCatalog(Yii::$app->user->identity->id)){
+				$this->layout = 'cataloglayout';
+			}
+			
+			if(User::isUserAdmin(Yii::$app->user->identity->id)){
+				$this->layout = 'adminlayout';
+			}
+		
+			
+		}
+	}
+	
+	
 	
 	public function actionPrueba()
 	{
 		
-		return $this->render("prueba"); //pruebas del vizualizador
+		return $this->render("prueba"); #pruebas del vizualizador
 	}
 	
 	public function actionMostrar()
@@ -109,7 +128,7 @@ class SiteController extends Controller
 		return $this->render("upload", ["model" => $model, "msg" => $msg]);
 	}
 	
-public function actionSimple()
+public function actionSimple() #pagina de inicio de un usuario rol 1
 {
 		/*$table = new Objeto;
 		
@@ -164,7 +183,7 @@ public function actionSimple()
 		return $this->render("simple",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
 	}
 	
-	public function actionTesis()
+	public function actionTesis() #pagina donde realizaremos busquedas del tipo tesis
 	{
 		/*$table = new Objeto;
 	
@@ -219,7 +238,7 @@ public function actionSimple()
 		return $this->render("tesis",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
 	}
 
-	public function actionPublicaciones()
+	public function actionPublicaciones() #pagina donde realizaremos busquedas del tipo publicaciones
 	{
 		/*$table = new Objeto;
 	
@@ -274,7 +293,7 @@ public function actionSimple()
 		return $this->render("publicaciones",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
 	}
 	
-	public function actionArticulo()
+	public function actionArticulo() #pagina donde realizaremos busqueda de articulos
 	{
 		/*$table = new Objeto;
 	
@@ -334,7 +353,7 @@ public function actionCatalog()
 	return $this->render("crear");
 }
 
-public function actionAdmin()
+public function actionAdmin() //#pagina donde visualizamos los usuarios registrados
 {
 	
 	
@@ -342,11 +361,10 @@ public function actionAdmin()
 	
 	$model = $table->find()->all();
 	*/
-	$this->layout = 'adminlayout';
 	
 	$form = new Buscar;
-	$search = null;//guardamos la busqueda realizada en esta variable
-	if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
+	$search = null; 	#guardamos la busqueda realizada en esta variable
+	if($form->load(Yii::$app->request->get()))#cuando el formulario de busqueda es enviado
 	{
 		if ($form->validate())//validamos el campo
 		{
@@ -896,12 +914,12 @@ public function actionActualizar()
 	{
 		if(Yii::$app->request->post())
 		{
-			$id_revista = Html::encode($_POST["id_revista"]);
-			if((int) $id_revista)
+			$id = Html::encode($_POST["id"]);
+			if((int) $id)
 			{
-				if(Revista::deleteAll("id_revista=:id", [":id" => $id_revista]))
+				if(DbRevista::deleteAll("id=:id", [":id" => $id]))
 				{
-					echo"Revista con la ID $id_revista, ha sido eliminado. Redireccionando";
+					echo"Revista con la ID $id, ha sido eliminado. Redireccionando";
 					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrosrevista")."'> ";
 	
 					//eliminamos todos los archivos y el directorio que los contiene
@@ -910,11 +928,11 @@ public function actionActualizar()
 	
 	
 					{
-						foreach (glob("imagenes/revista/".$id_revista."/*.*") as $archivos_carpeta)
+						foreach (glob("imagenes/revista/".$id."/*.*") as $archivos_carpeta)
 						{
 							unlink($archivos_carpeta); //eliminamos todos los archivos dentro de la carpeta
 						}
-						rmdir("imagenes/revista/".$id_revista); //eliminamos la carpeta.
+						rmdir("imagenes/revista/".$id); //eliminamos la carpeta.
 							
 					}
 				}
@@ -1041,7 +1059,7 @@ public function actionActualizar()
 	
 	public function actionRegistrosrevista(){
 		
-		$this->layout = 'adminlayout';
+		
 		$form = new Buscar;
 		$search = null;//guardamos la busqueda realizada en esta variable
 	
@@ -1099,7 +1117,7 @@ public function actionActualizar()
 	
 	
 	public function actionRegistrostesis(){
-		$this->layout = 'adminlayout';
+		
 		
 		$form = new Buscar;
 		$search = null;//guardamos la busqueda realizada en esta variable
@@ -1163,7 +1181,7 @@ public function actionActualizar()
 	public function actionRegistros() //se crea una tabla con todos los registros que existen en la base de datos, 
 									  //ademas podemos realizar busquedas en ella
 	{
-		$this->layout = 'adminlayout';
+		
 		/*$table = new Objeto;
 		
 		$model = $table->find()->all();
@@ -1232,7 +1250,7 @@ public function actionActualizar()
 	
 	public function actionCreararticulo() //creamos los objetos bibliograficos que seran insertados en la tabla de la Base de Datos
 	{
-		$this->layout = 'adminlayout';
+		
 		$model = new FormArticulo;
 		$modelsArticulo = [new Articulo];
 		$msg = null;
@@ -1321,7 +1339,7 @@ public function actionActualizar()
 	
 	public function actionCrearrevista() //creamos los objetos bibliograficos que seran insertados en la tabla de la Base de Datos
 	{
-		$this->layout = 'adminlayout';
+		
 		$model = new FormRevista;
 		$msg = null;
 	
@@ -1416,7 +1434,7 @@ public function actionActualizar()
 	
 	public function actionCreartesis() //creamos los objetos bibliograficos que seran insertados en la tabla de la Base de Datos
 	{
-		$this->layout = 'adminlayout';
+		
 		$model = new FormTesis;
 		$msg = null;
 	
@@ -1510,7 +1528,7 @@ public function actionActualizar()
 	
 	public function actionCrear() //creamos los objetos bibliograficos que seran insertados en la tabla de la Base de Datos
 	{
-		$this->layout = 'adminlayout';
+		
 		$model = new FormObj;
 		$msg = null;
 		
@@ -1639,7 +1657,7 @@ public function behaviors() //funcion de control de roles
     return [
         'access' => [
             'class' => AccessControl::className(),
-            'only' => ['logout','mostrar','ver','viewer','prueba', 'crear', 'registros', 'admin', 'editarusuario','creartesis','registrostesis','','registrosrevista','crearrevista','actualizarrevista','aaaaa'],
+            'only' => ['logout','mostrar','ver','viewer','prueba', 'crear', 'registros', 'admin', 'editarusuario','creartesis','registrostesis','','registrosrevista','crearrevista','actualizar','actualizartesis','actualizarrevista','aaaaa'],
             'rules' => [
                 [
                     //El administrador tiene permisos sobre las siguientes acciones
@@ -1657,7 +1675,7 @@ public function behaviors() //funcion de control de roles
                 ],
                 [
                 //Los usuarios catalog tienen permisos sobre las siguientes acciones
-                'actions' => ['logout', 'crear','registros'],
+                'actions' => ['logout', 'crear','registros','creartesis','registrostesis','crear','registrosrevista','actualizar','actualizartesis','actualizarrevista','prueba'],
                 //Esta propiedad establece que tiene permisos
                 'allow' => true,
                 //Usuarios autenticados, el signo ? es para invitados
@@ -1728,7 +1746,8 @@ public function behaviors() //funcion de control de roles
     			->where(["like","nombre",$search])
     			->orwhere(["like","autor",$search])
     			->orwhere(["like","editorial",$search])
-    			->orwhere(["like","fecha",$search]);
+    			->orwhere(["like","fecha",$search])
+    			->orwhere(["like","isbn",$search]);
     			$countQuery = clone $query;
     			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
     			$model = $query->offset($pages->offset)

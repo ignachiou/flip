@@ -25,27 +25,10 @@ $this->title = 'Bibliotheca';
 		]);
 		?>
 		
-		<?php $q = ActiveForm::begin([  
-		"method" => "get",
-		"action" => Url::toRoute("site/tesis"),
-		"enableClientValidation" => true,
-		]);
-		?>
-		<?php $a = ActiveForm::begin([  
-		"method" => "get",
-		"action" => Url::toRoute("site/publicaciones"),
-		"enableClientValidation" => true,
-		]);
-		?>
+		
    	       
     <div class="form-group">
-	<?= $f->field($form, "m")->input("buscar")?> 
-	</div>
-	<div class="form-group">
-	<?= $q->field($form, "t")->input("buscar")?> 
-	</div>
-	<div class="form-group">
-	<?= $a->field($form, "p")->input("buscar")?> 
+	<?= $f->field($form, "q")->input("buscar")?> 
 	</div>
 	
 	

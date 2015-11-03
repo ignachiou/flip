@@ -11,12 +11,34 @@ use yii\filters\VerbFilter;
 use app\models\Articulo;
 use app\models\Model;
 use yii\web\UploadedFile;
+use app\models\User;
 
 /**
  * RevistaController implements the CRUD actions for Revista model.
  */
 class RevistaController extends Controller
 {
+	
+function init(){	
+		
+			if (!\Yii::$app->user->isGuest) {
+					
+				if(User::isUserSimple(Yii::$app->user->identity->id)){
+					$this->layout = 'simplelayout';
+			}
+			
+			if(User::isUserCatalog(Yii::$app->user->identity->id)){
+				$this->layout = 'cataloglayout';
+			}
+			
+			if(User::isUserAdmin(Yii::$app->user->identity->id)){
+				$this->layout = 'adminlayout';
+			}
+		
+			
+		}
+	}
+	
     public function behaviors()
     {
         return [
@@ -124,7 +146,7 @@ class RevistaController extends Controller
         				
         				}
         				
-        				return $this->redirect(['view', 'id' => $model->id]);
+        				return $this->redirect(['site/registrosrevista', 'id' => $model->id]);
         			}
         		} catch (Exception $e) {
         			$transaction->rollBack();

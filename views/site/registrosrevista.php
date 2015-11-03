@@ -6,7 +6,7 @@ use yii\data\Pagination;
 use yii\widgets\LinkPager;
 ?>
 
-<a href="<?= URL::toRoute("site/crearrevista")?>">Crear un nuevo registro de una revista</a>
+
 
 <?php $f = ActiveForm::begin([
 		"method" => "get",
@@ -20,6 +20,7 @@ use yii\widgets\LinkPager;
 </div>
 
 <?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
+<?= Html::a("Crear Publicacion",'index.php?r=revista%2Fcreate',["class" => "btn btn-success"])?>
 
 <?php $f->end() ?>
 
@@ -51,9 +52,9 @@ use yii\widgets\LinkPager;
 		<td><?= $row->fecha_revista?></td>
 		<td><?= $row->issn_revista?></td>
 		<td><?= $row->periodicidad_revista?></td>
-		<td><a href= "<?= Url::toRoute(["site/actualizarrevista", "id" => $row->id]) ?>">Editar</a></td>
+		<td><a href= "<?= Url::toRoute(["site/actualizarrevista", "id" => $row->id]) ?>"><?= Html::submitButton("Editar", ["class" => "btn btn-warning"])?></a></td>
 		<td>
-            <a href="#" data-toggle="modal" data-target="#id_<?= $row->id ?>">Eliminar</a>
+            <a href="#" data-toggle="modal" data-target="#id_<?= $row->id ?>"><?= Html::submitButton("Eliminar", ["class" => "btn btn-danger"])?></a>
             <div class="modal fade" role="dialog" aria-hidden="true" id="id_<?= $row->id ?>">
                       <div class="modal-dialog">
                             <div class="modal-content">
@@ -66,7 +67,7 @@ use yii\widgets\LinkPager;
                               </div>
                               <div class="modal-footer">
                               <?= Html::beginForm(Url::toRoute("site/eliminarrevista"), "POST") ?>
-                                    <input type="hidden" name="id_" value="<?= $row->id ?>">
+                                    <input type="hidden" name="id" value="<?= $row->id ?>">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                     <button type="submit" class="btn btn-primary">Eliminar</button>
                               <?= Html::endForm() ?>
