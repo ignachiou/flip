@@ -14,17 +14,17 @@ use yii\widgets\LinkPager;
 ?>
 
 <div class="form-group">
-	<?= $f->field($form, "q")->input("buscar")?> 
+	<center><?= $f->field($form, "t")->input("buscar")?></center> 
 </div>
 
-<?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
-<?= Html::a("Crear Tesis",'index.php?r=site%2Fcreartesis',["class" => "btn btn-success"])?>
+<center><?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
+<?= Html::a("Crear Tesis",'index.php?r=site%2Fcreartesis',["class" => "btn btn-success"])?></center>
 
 <?php $f->end() ?>
 
 <h3><?= $search ?></h3>	
 
-<h3> Lista de Tesis </h3>
+<center><h3> Catalogo de Tesis </h3></center>
 <table class= " table table-bordered">
 	<tr>
 	
@@ -41,7 +41,7 @@ use yii\widgets\LinkPager;
 	<?php foreach ($model as $row): ?>
 	<tr>
 		<td><?= $row->id_tesis?></td>
-		<td><?= $row->titulo_tesis ?></td>
+		<td><a href= "<?= Url::toRoute(["site/prueba1", "id_tesis" => $row->id_tesis, "url" => $row->url]) ?>"><?= $row->titulo_tesis ?></a></td>
 		<td><?= $row->redactor_tesis?></td>
 		<td><?= $row->tutor_tesis?></td>
 		<td><?= $row->fecha_tesis?></td>

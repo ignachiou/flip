@@ -16,17 +16,17 @@ use yii\widgets\LinkPager;
 ?>
 
 <div class="form-group">
-	<?= $f->field($form, "p")->input("buscar")?> 
+	<center><?= $f->field($form, "p")->input("buscar")?></center> 
 </div>
 
-<?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
-<?= Html::a("Crear Publicacion",'index.php?r=revista%2Fcreate',["class" => "btn btn-success"])?>
+<center><?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
+<?= Html::a("Crear Publicacion",'index.php?r=revista%2Fcreate',["class" => "btn btn-success"])?></center>
 
 <?php $f->end() ?>
 
 <h3><?= $search ?></h3>	
 
-<h3> Lista de Revistas </h3>
+<center><h3> Lista de Revistas </h3></center>
 <table class= " table table-bordered">
 	<tr>
 	
@@ -45,7 +45,7 @@ use yii\widgets\LinkPager;
 	<?php foreach ($model as $row): ?>
 	<tr>
 		<td><?= $row->id?></td>
-		<td><?= $row->titulo_revista ?></td>
+		<td><a href= "<?= Url::toRoute(["site/prueba2", "id" => $row->id, "url_revista" => $row->url_revista]) ?>"><?= $row->titulo_revista ?></a></td>
 		<td><?= $row->editorial_revista?></td>
 		<td><?= $row->volumen_revista?></td>
 		<td><?= $row->fasciculo_revista?></td>

@@ -67,6 +67,20 @@ class SiteController extends Controller
 		return $this->render("prueba"); #pruebas del vizualizador
 	}
 	
+	public function actionPrueba1()
+	{
+	
+		return $this->render("prueba1"); #pruebas del vizualizador
+	}
+	
+	public function actionPrueba2()
+	{
+	
+		return $this->render("prueba2"); #pruebas del vizualizador
+	}
+	
+	
+	
 	public function actionMostrar()
 	{	
 		$msg = null;
@@ -141,7 +155,7 @@ public function actionSimple() #pagina de inicio de un usuario rol 1
 		{
 			if ($form->validate())//validamos el campo
 			{
-				$search = Html::encode($form->q); //evita ataques xss 
+				$search = Html::encode($form->m); //evita ataques xss 
 				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
 				$query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
 				$model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
@@ -987,7 +1001,7 @@ public function actionActualizar()
 				}
 				else
 				{
-					echo "H ocurrido un ERROR al tratar de eliminar la tesis, redireccionamos ";
+					echo "Ha ocurrido un ERROR al tratar de eliminar la tesis, redireccionamos ";
 					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrostesis")."'> ";
 						
 				}
@@ -995,7 +1009,7 @@ public function actionActualizar()
 			}
 			else
 			{
-				echo "H ocurrido un ERROR al tratar de eliminar la tesis, redireccionamos ";
+				echo "Ha ocurrido un ERROR al tratar de eliminar la tesis, redireccionamos ";
 				echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrostesis")."'> ";
 	
 			}
@@ -1022,9 +1036,7 @@ public function actionActualizar()
 										
 				//eliminamos todos los archivos y el directorio que los contiene
 				//primero se deben eliminar los archivos de la carpeta antes de poder eliminar la carpeta como tal
-					
-					
-					
+									
 					{
 						foreach (glob("imagenes/monografias/".$id_objeto."/*.*") as $archivos_carpeta)
 						{
@@ -1126,7 +1138,7 @@ public function actionActualizar()
 		{
 			if ($form->validate())//validamos el campo
 			{
-				$search = Html::encode($form->q); //evita ataques xss
+				$search = Html::encode($form->t); //evita ataques xss
 				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
 				 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
 				 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
@@ -1193,7 +1205,7 @@ public function actionActualizar()
 		{
 			if ($form->validate())//validamos el campo
 			{
-				$search = Html::encode($form->q); //evita ataques xss 
+				$search = Html::encode($form->m); //evita ataques xss 
 				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
 				$query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
 				$model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
@@ -1204,10 +1216,7 @@ public function actionActualizar()
 				->orwhere(["like","autor",$search])
 				->orwhere(["like","editorial",$search])
 				->orwhere(["like","fecha",$search])
-				->orwhere(["like","tema",$search])
-				->orwhere(["like","resumen",$search])
-				->orwhere(["like","lengua",$search])
-				->orwhere(["like","colaborador",$search])
+				->orwhere(["like","resumen",$search])				
 				->orWhere(["like","isbn",$search])
 				->orwhere(["like","desc1",$search])
 				->orwhere(["like","desc2",$search])
@@ -1661,7 +1670,7 @@ public function behaviors() //funcion de control de roles
             'rules' => [
                 [
                     //El administrador tiene permisos sobre las siguientes acciones
-                    'actions' => ['logout','admin','ver', 'viewer','prueba', 'editarusuario','mostrar', 'registros','crear','creartesis','registrostesis','','registrosrevista','actualizarrevista','crearrevista','aaaaa'],
+                    'actions' => ['logout','admin','ver', 'viewer','prueba', 'editarusuario','mostrar', 'registros','crear','creartesis','registrostesis','','registrosrevista','actualizar','actualizarrevista','actualizartesis','crearrevista','aaaaa'],
                     //Esta propiedad establece que tiene permisos
                     'allow' => true,
                     //Usuarios autenticados, el signo ? es para invitados
@@ -1737,7 +1746,7 @@ public function behaviors() //funcion de control de roles
     	{
     		if ($form->validate())//validamos el campo
     		{
-    			$search = Html::encode($form->q); //evita ataques xss
+    			$search = Html::encode($form->m); //evita ataques xss
     			/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
     			 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
     			 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models

@@ -19,7 +19,7 @@ class ArticuloSearch extends Articulo
     {
         return [
             [['id_articulo', 'id_revista'], 'integer'],
-            [['titulo_articulo', 'autor_articulo', 'resumen_articulo', 'desc1', 'desc2', 'desc3', 'desc4'], 'safe'],
+            [['titulo_articulo', 'autor_articulo', 'resumen_articulo', 'desc1', 'desc2', 'desc3', 'desc4', 'url_revista', 'pagina'], 'safe'],
         ];
     }
 

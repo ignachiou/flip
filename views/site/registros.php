@@ -16,18 +16,18 @@ use yii\widgets\LinkPager;
 ?>
 
 <div class="form-group">
-	<?= $f->field($form, "m")->input("buscar")?> 
+	<center><?= $f->field($form, "m")->input("buscar")?></center> 
 </div>
 
-<?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
-<?= Html::a("Crear Monografia",'index.php?r=site%2Fcrear',["class" => "btn btn-success"])?>
+<center><?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
+<?= Html::a("Crear Monografia",'index.php?r=site%2Fcrear',["class" => "btn btn-success"])?></center>
 
 
 <?php $f->end() ?>
 
 <h3><?= $search ?></h3>	
 
-<h3> Lista de Monografias </h3>
+<center><h3> Catalogo de Monografias </h3></center>
 <table class= " table table-bordered">
 	<tr>
 	
@@ -42,9 +42,9 @@ use yii\widgets\LinkPager;
 	</tr>
 	<?php foreach ($model as $row): ?>
 	<tr>
-		
+		<? url::toRou?>
 		<td><?= $row->id_objeto?></td>
-		<td><a href= "<?= Url::toRoute(["site/prueba", "id_objeto" => $row->id_objeto, "url" => $row->url]) ?>"><?= $row->nombre ?></a></td>
+		<td><a href= "<?= Url::toRoute(["site/prueba", "id_objeto" => $row->id_objeto, "url" => $row->url,'#' => (($row->url).($row->id_objeto).'/4')  ]) ?>"><?= $row->nombre ?></a></td>
 		<td><?= $row->autor?></td>
 		<td><?= $row->editorial?></td>
 		<td><?= $row->fecha?></td>

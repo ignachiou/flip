@@ -70,6 +70,7 @@ use yii\helpers\url;
                 		'desc2',
                 		'desc3',
                 		'desc4',
+                		'pagina',
                 ],
             ]); ?>
 
@@ -119,6 +120,9 @@ use yii\helpers\url;
                         <div class="row">
                             <div class="col-sm-6">
                                 <?= $form->field($modelsArticulo, "[{$i}]desc4")->textInput(['maxlength' => true]) ?>
+                            </div>
+                            <div class="col-sm-6">
+                                <?= $form->field($modelsArticulo, "[{$i}]pagina")->textInput(['maxlength' => true]) ?>
                             </div>
                         </div><!-- .row -->
                      </div>

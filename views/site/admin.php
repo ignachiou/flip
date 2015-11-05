@@ -16,16 +16,16 @@ use yii\widgets\LinkPager;
 ?>
 
 <div class="form-group">
-	<?= $f->field($form, "q")->input("buscar")?> 
+	<center><?= $f->field($form, "q")->input("buscar")?></center> 
 </div>
 
-<?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
+<center><?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?></center>
 
 <?php $f->end() ?>
 
 <h3><?= $search ?></h3>
 
-<h3>Lista de Usuarios</h3>
+<center><h3>Control de Usuarios</h3></center>
 <table class= " table table-bordered">
 	<tr>
 	

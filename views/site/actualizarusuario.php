@@ -4,8 +4,8 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 ?>
 
+<?= Html::a("Usuarios Registrados",'index.php?r=site%2Fadmin',["class" => "btn btn-success"])?>
 
-<a href="<?= Url::toRoute("site/admin") ?>">Ir a la lista de Usuarios</a>
 
 <h1>Editar el Usuario con ID <?= Html::encode($_GET["id"]) ?></h1>
 

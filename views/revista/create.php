@@ -11,7 +11,7 @@ $this->title = 'Crear Publicacion';
 
 ?>
 <div class="revista-create">
-
+	<?= Html::a("Catalogo de Publicaciones",'index.php?r=site%2Fregistrosrevista',["class" => "btn btn-success"])?>
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [

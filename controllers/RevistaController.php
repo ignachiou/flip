@@ -119,7 +119,8 @@ function init(){
         				
         				foreach ($modelsArticulo as $modelArticulo) {
         					
-        					$modelArticulo->id_revista = $id;        					
+        					$modelArticulo->id_revista = $id;       
+        					$modelArticulo->url_revista = 'imagenes/revista/'.$id."/"; 					
         					
         					if (! ($flag = $modelArticulo->save(false))) {
         						$transaction->rollBack();

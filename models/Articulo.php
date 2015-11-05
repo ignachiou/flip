@@ -36,8 +36,8 @@ class Articulo extends \yii\db\ActiveRecord
     {
         return [
             [[ 'titulo_articulo', 'autor_articulo', 'resumen_articulo', 'desc1', 'desc2', 'desc3', 'desc4'], 'required'],
-            [['id_revista'], 'integer'],
-            [['titulo_articulo', 'autor_articulo', 'desc1', 'desc2', 'desc3', 'desc4'], 'string', 'max' => 50],
+            [['id_revista','pagina'], 'integer'],
+            [['titulo_articulo', 'autor_articulo', 'desc1', 'desc2', 'desc3', 'desc4', 'url_revista'], 'string', 'max' => 50],
             [['resumen_articulo'], 'string', 'max' => 300]
         ];
     }
@@ -57,6 +57,7 @@ class Articulo extends \yii\db\ActiveRecord
             'desc2' => 'Desc2',
             'desc3' => 'Desc3',
             'desc4' => 'Desc4',
+        	'pagina' => 'Pagina del Articulo'
         ];
     }
 

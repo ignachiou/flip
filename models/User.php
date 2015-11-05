@@ -14,11 +14,9 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
     public $activate;
     public $rol;
 
-    /**
-     * @inheritdoc
-     */
+   
     
-    /* busca la identidad del usuario a través de su $id */
+    # busca la identidad del usuario a través de su $id */
     
     public static function isUserAdmin($id)
     {
@@ -64,11 +62,9 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
         return isset($user) ? new static($user) : null;
     }
 
-    /**
-     * @inheritdoc
-     */
     
-    /* Busca la identidad del usuario a través de su token de acceso */
+    
+    # Busca la identidad del usuario a través de su token de acceso */
     public static function findIdentityByAccessToken($token, $type = null)
     {
         
@@ -110,31 +106,24 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
         return null;
     }
 
-    /**
-     * @inheritdoc
-     */
     
-    /* Regresa el id del usuario */
+    
+    # Regresa el id del usuario 
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * @inheritdoc
-     */
+   
     
-    /* Regresa la clave de autenticación */
+    # Regresa la clave de autenticación 
     public function getAuthKey()
     {
         return $this->authKey;
     }
 
-    /**
-     * @inheritdoc
-     */
     
-    /* Valida la clave de autenticación */
+    # Valida la clave de autenticación 
     public function validateAuthKey($authKey)
     {
         return $this->authKey === $authKey;

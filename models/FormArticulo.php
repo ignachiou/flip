@@ -16,6 +16,8 @@ public $descriptor_1;
 public $descriptor_2;
 public $descriptor_3;
 public $descriptor_4;
+public $url_revista;
+public $pagina;
 
 
 

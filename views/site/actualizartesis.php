@@ -4,8 +4,8 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 ?>
 
+<?= Html::a("Catalogo de Tesis",'index.php?r=site%2Fregistrostesis',["class" => "btn btn-success"])?>
 
-<a href="<?= Url::toRoute("site/registrostesis") ?>">Ir a la lista de Tesis</a>
 
 <h1>Editar la Tesis con ID <?= Html::encode($_GET["id_tesis"]) ?></h1>
 

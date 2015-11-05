@@ -27,14 +27,14 @@ $dire = html::encode($_GET["url"]);  #Varible que obtengo a traves de un GET, me
 <?php
 header('Content-type: text/html; charset=utf-8');
  
-$path = $dire.$id."/"; # Directorio donde están las imágenes
+$path = $dire.$id."/"; # Directorio donde estÃ¡n las imÃ¡genes
 $total = null;
 
 # Comprobamos si es un directorio y si lo es nos movemos a el
 if (is_dir($path)){
 	$dir = opendir($path);
 	
-	# Recorremos los ficheros que hay en el directorio y tomamos solamente aquellos cuya extensión
+	# Recorremos los ficheros que hay en el directorio y tomamos solamente aquellos cuya extensiÃ³n
 	# sea jpg, gif y png y la guardamos en una lista
 	while (false !== ($file = readdir($dir))) {
 		if (preg_match("#([a-zA-Z0-9_\-\s]+)\.(gif|GIF|jpg|JPG|png|PNG)#is",$file)){
@@ -56,15 +56,15 @@ if (is_dir($path)){
 	}
 	?>
 
-<div id="canvas">
+<div id="canvas" >
 <font color="white">sdfsd</font>
 <div class="zoom-icon zoom-icon-in"></div>
 
-<div class="magazine-viewport" style="position: absolute; left:117px; top:-39px; background-color:#ffffff;  width:100%; height:100%;" >
+<div class="magazine-viewport"  style="overflow:auto; position: absolute; left:117px; top:-39px; background-color:#ffffff;  width:100%; height:100%;" >
 
-<div class="container">
+<div class="container" >
 	<font color="black">sdfsddsdfsdf</font>
-		<div class="magazine">
+		<div class="magazine" >
 			<!-- Next button -->
 			<div ignore="1" class="next-button"></div>
 			<!-- Previous button -->
@@ -97,12 +97,10 @@ if (is_dir($path)){
 						{							
 						?>
 						<tr>						
-							<td style="width: 200px; cursor: pointer"; bgcolor="#ece9d8" onmouseover="this.style.cursor='pointer';" onclick="setDisplayParams(<?php echo $i+1;?>, this, <?php echo $i+1;?>)">
-								P&aacute;gina <?php echo $i+1;?>
+							<td style="width: 200px; cursor: pointer"; bgcolor="#ffffff" onmouseover="this.style.cursor='pointer';" >
+								<a id="pageSelect"  href="#<?php echo $path; ?><?php echo $i+1?>"> Pagina <?php echo $i+1;?></a>
 							</td>
-							<td style="display: none; width: 0px">
-								2456574
-							</td>							
+														
 						</tr>	
 						<?php 
 							}
@@ -111,11 +109,6 @@ if (is_dir($path)){
 				</table>
 			
 			</div>
-	
-			<div style="position: absolute; left: 10px; bottom: 5px; font-size: 11px; width: 200px;">
-				Enlace a la imagen:<br />
-				<a id="pageLink" style="font-size: 11px;" href="imagenes/monografias/19/2.jpg">imagenes/monografias/19/1.jpg</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		</div>
 		
 	</div>
   </div>
@@ -123,21 +116,24 @@ if (is_dir($path)){
 
 <script type="text/javascript">
 
+
+							
+
 function addPage(page, book) {
 
 	var id, pages = book.turn('pages');
 
-	// Create a new element for this page
+	// Crear un nuevo elemento para la pagina
 	var element = $('<div />', {});
 
-	// Add the page to the flipbook
+	// Agregar la pagina al flip
 	if (book.turn('addPage', element, page)) {
 
 		// Add the initial HTML
 		// It will contain a loader indicator and a gradient
 		element.html('<div class="gradient"></div><div class="loader"></div>');
 
-		// Load the page
+		// Cargar la Pagina
 		loadPage(page, element);
 	}
 
@@ -455,11 +451,11 @@ function setPreview(view) {
 	});
 }
 
-// Width of the flipbook when zoomed in
+// que tan profundo es el zoom in
 
 function largeMagazineWidth() {
 	
-	return 2214;
+	return 1900;
 
 }
 
@@ -563,11 +559,11 @@ function loadApp() {
 					currentPage = book.turn('page'),
 					pages = book.turn('pages');
 			
-					// Update the current URI
+					// Actualizar la URI
 
 					Hash.go('<?php  echo $path?>' + page).update();
 
-					// Show and hide navigation buttons
+					// Mostrar o esconder los botones de navegacion
 
 					disableControls(page);
 					
@@ -598,7 +594,7 @@ function loadApp() {
 
 				missing: function (event, pages) {
 
-					// Add pages that aren't in the magazine
+					// agregar paginas que no estan en el flip
 
 					for (var i = 0; i < pages.length; i++)
 						addPage(pages[i], $(this));
@@ -718,9 +714,9 @@ function loadApp() {
 		}
 	});
 
-	// URIs - Format #/page/1 
+	// URIs - Format #$path/1 
 
-	Hash.on('<?php  echo $path?>/([0-9]*)$', {
+	Hash.on('<?php  echo $path?>([0-9]*)$', {
 		yep: function(path, parts) {
 			var page = parts[1];
 

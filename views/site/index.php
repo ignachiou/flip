@@ -12,9 +12,11 @@ use yii\base\model;
 $this->title = 'Bibliotheca';
 ?>
 <div class="site-index">
-
+	
+		<center><img WIDTH=150, HEIGTH=300 align=center src="imagenes/gif/logo_ula.jpg"></center>
+	
     <div class="jumbotron">
-        <h1>Bienvenidos</h1>
+        <h2>Bienvenidos</h2>
 
         <p class="lead">Biblioteca digital parcial para consulta de objetos bibliograficos</p>
         
@@ -28,7 +30,7 @@ $this->title = 'Bibliotheca';
 		
    	       
     <div class="form-group">
-	<?= $f->field($form, "q")->input("buscar")?> 
+	<?= $f->field($form, "m")->input("buscar")?> 
 	</div>
 	
 	
@@ -38,7 +40,7 @@ $this->title = 'Bibliotheca';
 
 <h3><?= $search ?></h3>
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
+        
     </div>
 
     <div class="body-content">

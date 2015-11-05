@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 
 <h1>Registro de usuarios</h1>
 <?php $form = ActiveForm::begin([
-    'method' => 'post',
+ 'method' => 'post',
  'id' => 'formulario',
  'enableClientValidation' => false,
  'enableAjaxValidation' => true,

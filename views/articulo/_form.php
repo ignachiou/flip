@@ -27,6 +27,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'desc3')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'desc4')->textInput(['maxlength' => true]) ?>
+    
+    <?= $form->field($model, 'pagina')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

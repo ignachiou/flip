@@ -14,10 +14,10 @@ use yii\widgets\LinkPager;
 ?>
 
 <div class="form-group">
-	<?= $f->field($form, "q")->input("buscar")?> 
+	<center><?= $f->field($form, "m")->input("buscar")?></center> 
 </div>
 
-<?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
+<center><?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?></center>
 
 <?php $f->end() ?>
 
@@ -33,7 +33,7 @@ use yii\widgets\LinkPager;
 	</tr>
 	<?php foreach ($model as $row): ?>
 	<tr>
-		<td><?= $row->nombre ?></td>
+		<td><a href= "<?= Url::toRoute(["site/prueba", "id_objeto" => $row->id_objeto, "url" => $row->url]) ?>"><?= $row->nombre ?></a></td>
 		<td><?= $row->autor?></td>
 		<td><?= $row->editorial?></td>
 		<td><?= $row->fecha?></td>
