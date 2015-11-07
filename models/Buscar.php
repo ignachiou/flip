@@ -9,11 +9,11 @@ class Buscar extends model{
 	public function rules()
 	{		
 		return[
-				["q", "match", "pattern" =>  '/^[0-9a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras y numeros'],
-				["m", "match", "pattern" =>  '/^[0-9a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras y numeros'],
-				["t", "match", "pattern" =>  '/^[0-9a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras y numeros'],
-				["p", "match", "pattern" =>  '/^[0-9a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras y numeros'],
-				["a", "match", "pattern" =>  '/^[0-9a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras y numeros'],
+				["q", "match", "pattern" =>  '/^[0-9a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'SÃ³lo se aceptan letras y numeros'],
+				["m", "match", "pattern" =>  '/^[0-9a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'SÃ³lo se aceptan letras y numeros'],
+				["t", "match", "pattern" =>  '/^[0-9a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'SÃ³lo se aceptan letras y numeros'],
+				["p", "match", "pattern" =>  '/^[0-9a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'SÃ³lo se aceptan letras y numeros'],
+				["a", "match", "pattern" =>  '/^[0-9a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'SÃ³lo se aceptan letras y numeros'],
 								
 		];		
 	}

@@ -21,11 +21,11 @@ use yii\widgets\LinkPager;
 
 <?php $f->end() ?>
 
-<h3>Lista de objetos bibliograficos</h3>
-<table class= " table table-bordered">
+<h3>Lista de Monografias</h3>
+<table class= " table table-striped">
 	<tr>
 	
-		<th>Nombre del Objeto Bibliografico</th>
+		<th>Nombre de la Monografia</th>
 		<th>Autor</th>
 		<th>Editorial</th>
 		<th>Fecha de Publicacion</th>

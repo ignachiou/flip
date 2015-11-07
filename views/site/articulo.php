@@ -21,18 +21,22 @@ use yii\widgets\LinkPager;
 
 <?php $f->end() ?>
 
-<h3>Lista de tesis</h3>
-<table class= " table table-bordered">
+<h3>Lista de Articulos</h3>
+<table class= "table table-striped">
 	<tr>
 	
 		<th>Nombre del Articulo</th>
 		<th>Autor Articulo</th>
+		<th>Resumen</th>
+		<th>P&aacute;gina</th>
 				
 	</tr>
 	<?php foreach ($model as $row): ?>
 	<tr>
 		<td><a href= "<?= Url::toRoute(["site/prueba2", "url_revista" => $row->url_revista, '#' => (($row->url_revista).($row->pagina))]) ?>"><?= $row->titulo_articulo?></td>
 		<td><?= $row->autor_articulo?></td>
+		<td><?= $row->resumen_articulo?></td>
+		<td><?= $row->pagina?></td>
 				
     </tr>
 	<?php endforeach?>

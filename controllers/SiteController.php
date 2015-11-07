@@ -135,7 +135,7 @@ class SiteController extends Controller
 			if ($model->file && $model->validate()) {
 				foreach ($model->file as $file) {
 					$file->saveAs('C:/xampp/htdocs/basic/imagenes/' . $file->baseName . '.' . $file->extension);
-					$msg = "<p><strong class='label label-info'>subida realizada con éxito</strong></p>";
+					$msg = "<p><strong class='label label-info'>subida realizada con ï¿½xito</strong></p>";
 				}
 			}
 		}
@@ -391,7 +391,10 @@ public function actionAdmin() //#pagina donde visualizamos los usuarios registra
 			->where(["like","id",$search])
 			->orwhere(["like","usuario",$search])
 			->orwhere(["like","email",$search])
-			->orwhere(["like","role",$search]);
+			->orwhere(["like","role",$search])
+			->orwhere(["like","nombre",$search])
+			->orwhere(["like","apellido",$search])
+			->orwhere(["like","nacionalidad",$search]);
 			$countQuery = clone $query;
 			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
 			$model = $query->offset($pages->offset)
@@ -551,7 +554,7 @@ public function actionEliminarusuario()
     if (Yii::$app->request->get())
     {
    
-        //Obtenemos el valor de los parámetros get
+        //Obtenemos el valor de los parï¿½metros get
         $id = Html::encode($_GET["id"]);
         $authKey = $_GET["authKey"];
     
@@ -584,7 +587,7 @@ public function actionEliminarusuario()
                 return $this->redirect(["site/login"]);
             }
         }
-        else //Si id no es un número entero redireccionamos a login
+        else //Si id no es un nï¿½mero entero redireccionamos a login
         {
             return $this->redirect(["site/login"]);
         }
@@ -593,23 +596,23 @@ public function actionEliminarusuario()
  
  public function actionRegister()
  {
-  //Creamos la instancia con el model de validación
+  //Creamos la instancia con el model de validaciï¿½n
   $model = new FormRegister;
    
-  //Mostrará un mensaje en la vista cuando el usuario se haya registrado
+  //Mostrarï¿½ un mensaje en la vista cuando el usuario se haya registrado
   $msg = null;
    
-  //Validación mediante ajax
+  //Validaciï¿½n mediante ajax
   if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax)
         {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
    
-  //Validación cuando el formulario es enviado vía post
-  //Esto sucede cuando la validación ajax se ha llevado a cabo correctamente
-  //También previene por si el usuario tiene desactivado javascript y la
-  //validación mediante ajax no puede ser llevada a cabo
+  //Validaciï¿½n cuando el formulario es enviado vï¿½a post
+  //Esto sucede cuando la validaciï¿½n ajax se ha llevado a cabo correctamente
+  //Tambiï¿½n previene por si el usuario tiene desactivado javascript y la
+  //validaciï¿½n mediante ajax no puede ser llevada a cabo
   if ($model->load(Yii::$app->request->post()))
   {
    if($model->validate())
@@ -618,12 +621,15 @@ public function actionEliminarusuario()
     $table = new Usuarios;
     $table->usuario = $model->usuario;
     $table->email = $model->email;
+    $table->nombre = $model->nombre;
+    $table->apellido = $model->apellido;
+    $table->nacionalidad = $model->nacionalidad;
     //Encriptamos el password
     $table->clave = crypt($model->clave, Yii::$app->params["salt"]);
-    //Creamos una cookie para autenticar al usuario cuando decida recordar la sesión, esta misma
-    //clave será utilizada para activar el usuario
+    //Creamos una cookie para autenticar al usuario cuando decida recordar la sesiï¿½n, esta misma
+    //clave serï¿½ utilizada para activar el usuario
     $table->authKey = $this->randKey("abcdef0123456789", 200);
-    //Creamos un token de acceso único para el usuario
+    //Creamos un token de acceso ï¿½nico para el usuario
     $table->accessToken = $this->randKey("abcdef0123456789", 200);
      
     //Si el registro es guardado correctamente
@@ -637,7 +643,7 @@ public function actionEliminarusuario()
       
      $subject = "Confirmar registro";
      $body = "<h1>Haga click en el siguiente enlace para finalizar tu registro</h1>";
-     $body .= "Bienvenidos a Bibliotheca, la biblioteca donde se encuentran toda clase de textos, presione el siquiente enlace para finalizar la suscripcion <br>
+     $body .= "Bienvenidos a Bibliotheca, la biblioteca donde se encuentran toda clase de textos, presione el siguiente enlace para finalizar la suscripcion <br>
      		<a href='http://localhost/flip/web/index.php?r=site/confirm&id=".$id."&authKey=".$authKey."'>Confirmar</a>";
       
      //Enviamos el correo
@@ -650,8 +656,12 @@ public function actionEliminarusuario()
      
      $model->usuario = null;
      $model->email = null;
+     $model->nombre = null;
+     $model->apellido = null;
+     $model->nacionalidad = null;
      $model->clave = null;
      $model->repita_clave = null;
+   
      
      $msg = "Dirigete a tu correo y confirma tu suscripcion";
     }
@@ -1666,7 +1676,7 @@ public function behaviors() //funcion de control de roles
     return [
         'access' => [
             'class' => AccessControl::className(),
-            'only' => ['logout','mostrar','ver','viewer','prueba', 'crear', 'registros', 'admin', 'editarusuario','creartesis','registrostesis','','registrosrevista','crearrevista','actualizar','actualizartesis','actualizarrevista','aaaaa'],
+            'only' => ['mostrar','ver','viewer', 'crear', 'registros', 'admin', 'editarusuario','creartesis','registrostesis','','registrosrevista','crearrevista','actualizar','actualizartesis','actualizarrevista','aaaaa'],
             'rules' => [
                 [
                     //El administrador tiene permisos sobre las siguientes acciones
@@ -1675,10 +1685,10 @@ public function behaviors() //funcion de control de roles
                     'allow' => true,
                     //Usuarios autenticados, el signo ? es para invitados
                     'roles' => ['@'],
-                    //Este método nos permite crear un filtro sobre la identidad del usuario
-                    //y así establecer si tiene permisos o no
+                    //Este mï¿½todo nos permite crear un filtro sobre la identidad del usuario
+                    //y asï¿½ establecer si tiene permisos o no
                     'matchCallback' => function ($rule, $action) {
-                        //Llamada al método que comprueba si es un administrador
+                        //Llamada al mï¿½todo que comprueba si es un administrador
                         return User::isUserAdmin(Yii::$app->user->identity->id);
                     },
                 ],
@@ -1689,10 +1699,10 @@ public function behaviors() //funcion de control de roles
                 'allow' => true,
                 //Usuarios autenticados, el signo ? es para invitados
                 'roles' => ['@'],
-                //Este método nos permite crear un filtro sobre la identidad del usuario
-                //y así establecer si tiene permisos o no
+                //Este mï¿½todo nos permite crear un filtro sobre la identidad del usuario
+                //y asï¿½ establecer si tiene permisos o no
                 'matchCallback' => function ($rule, $action) {
-                	//Llamada al método que comprueba si es un usuario simple
+                	//Llamada al mï¿½todo que comprueba si es un usuario simple
                 	return User::isUserCatalog(Yii::$app->user->identity->id);
                 },
                 ],
@@ -1703,10 +1713,10 @@ public function behaviors() //funcion de control de roles
                    'allow' => true,
                    //Usuarios autenticados, el signo ? es para invitados
                    'roles' => ['@'],
-                   //Este método nos permite crear un filtro sobre la identidad del usuario
-                   //y así establecer si tiene permisos o no
+                   //Este mï¿½todo nos permite crear un filtro sobre la identidad del usuario
+                   //y asï¿½ establecer si tiene permisos o no
                    'matchCallback' => function ($rule, $action) {
-                      //Llamada al método que comprueba si es un usuario simple
+                      //Llamada al mï¿½todo que comprueba si es un usuario simple
                       return User::isUserSimple(Yii::$app->user->identity->id);
                   },
                ],
@@ -1714,8 +1724,8 @@ public function behaviors() //funcion de control de roles
                
             ],
         ],
- //Controla el modo en que se accede a las acciones, en este ejemplo a la acción logout
- //sólo se puede acceder a través del método post
+ //Controla el modo en que se accede a las acciones, en este ejemplo a la acciï¿½n logout
+ //sï¿½lo se puede acceder a travï¿½s del mï¿½todo post
         'verbs' => [
             'class' => VerbFilter::className(),
             'actions' => [

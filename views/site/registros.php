@@ -20,7 +20,7 @@ use yii\widgets\LinkPager;
 </div>
 
 <center><?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
-<?= Html::a("Crear Monografia",'index.php?r=site%2Fcrear',["class" => "btn btn-success"])?></center>
+<?php ?></center>
 
 
 <?php $f->end() ?>
@@ -28,7 +28,8 @@ use yii\widgets\LinkPager;
 <h3><?= $search ?></h3>	
 
 <center><h3> Catalogo de Monografias </h3></center>
-<table class= " table table-bordered">
+<center><?= Html::a("Crear Monografia",'index.php?r=site%2Fcrear',["class" => "btn btn-success"])?></center><br>
+<table   class= " table table-striped">
 	<tr>
 	
 		<th> ID Monografia</th>

@@ -22,7 +22,7 @@ use yii\widgets\LinkPager;
 <?php $f->end() ?>
 
 <h3>Lista de tesis</h3>
-<table class= " table table-bordered">
+<table class= " table table-striped">
 	<tr>
 	
 		<th>Nombre de la Tesis</th>

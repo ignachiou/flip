@@ -10,25 +10,28 @@ class FormRegister extends model{
 	public $id;
     public $usuario;
     public $email;
+    public $nombre;
+    public $apellido;
+    public $nacionalidad;
     public $clave;
     public $repita_clave;
-   // public $nombre_usuario;
-   // public $apellido_usuario;
-    //public $locacion_usuario;
+    public $rol;
+  
     
     public function rules()
     {
         return [
 
         	['id', 'integer', 'message' => 'Id incorrecto'],
-            [['usuario', 'email', 'clave', 'repita_clave'], 'required', 'message' => 'Campo requerido'],
-            ['usuario', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 y máximo 50 caracteres'],
-            ['usuario', 'match', 'pattern' => "/^[0-9a-z]+$/i", 'message' => 'Sólo se aceptan letras y números'],
+            [['usuario', 'email','nombre','apellido','nacionalidad', 'clave', 'repita_clave'], 'required', 'message' => 'Campo requerido'],
+            ['usuario', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'MÃ­nimo 3 y mÃ¡ximo 50 caracteres'],
+            ['usuario', 'match', 'pattern' => "/^[0-9a-z]+$/i", 'message' => 'SÃ³lo se aceptan letras y nÃºmeros'],
             ['usuario', 'username_existe'],
-            ['email', 'match', 'pattern' => "/^.{5,80}$/", 'message' => 'Mínimo 5 y máximo 80 caracteres'],
-            ['email', 'email', 'message' => 'Formato no válido'],
+        	[['nombre', 'apellido', 'nacionalidad'], 'match', 'pattern' => '/^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'Solo se aceptan letras'],
+            ['email', 'match', 'pattern' => "/^.{5,80}$/", 'message' => 'MÃ­nimo 5 y mÃ¡ximo 80 caracteres'],
+            ['email', 'email', 'message' => 'Formato no vï¿½lido'],
             ['email', 'email_existe'],
-            ['clave', 'match', 'pattern' => "/^.{8,16}$/", 'message' => 'Mínimo 6 y máximo 16 caracteres'],
+            ['clave', 'match', 'pattern' => "/^.{8,16}$/", 'message' => 'MÃ­nimo 6 y mÃ¡ximo 16 caracteres'],
             ['repita_clave', 'compare', 'compareAttribute' => 'clave', 'message' => 'Los passwords no coinciden'],
         ];
     }

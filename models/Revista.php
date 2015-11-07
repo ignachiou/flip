@@ -48,13 +48,13 @@ class Revista extends \yii\db\ActiveRecord
         		['img', 'file',/*'skipOnEmpty' => false,*/
         		'uploadRequired' => 'No has seleccionado ningun archivo', //Error
         		//'maxSize' => 1024*1024*1, //1 MB
-        		//'tooBig' => 'El tamaño máximo permitido es 1MB', //Error
+        		//'tooBig' => 'El tamaï¿½o mï¿½ximo permitido es 1MB', //Error
         		//'minSize' => 10, //10 Bytes
-        		//'tooSmall' => 'El tamaño mínimo permitido son 10 BYTES', //Error
+        		//'tooSmall' => 'El tamaï¿½o mï¿½nimo permitido son 10 BYTES', //Error
         		'extensions' => 'jpg, gif,png',
-        		'wrongExtension' => 'El archivo {img} no contiene una extensión permitida {extensions}', //Error
+        		'wrongExtension' => 'El archivo {img} no contiene una extensiï¿½n permitida {extensions}', //Error
         		'maxFiles' => 500,
-        		'tooMany' => 'El máximo de archivos permitidos son {limit}', //Error
+        		'tooMany' => 'El mÃ¡ximo de archivos permitidos son {limit}', //Error
         		],
         ];
     }
@@ -73,11 +73,11 @@ class Revista extends \yii\db\ActiveRecord
             'fecha_revista' => 'Fecha Revista',
             'issn_revista' => 'Issn Revista',
             'periodicidad_revista' => 'Periodicidad Revista',
-            'desc1' => 'Desc1',
-            'desc2' => 'Desc2',
-            'desc3' => 'Desc3',
-            'desc4' => 'Desc4',
-        	'img'   => 'Seleccionar imagenes en formato .jpg .gif o .png:',
+            'desc1' => 'Descriptor 1',
+            'desc2' => 'Descriptor 2',
+            'desc3' => 'Descriptor 3',
+            'desc4' => 'Descriptor 4',
+        	'img'   => 'Seleccionar imagenes en formato .jpg :',
         ];
     }
 

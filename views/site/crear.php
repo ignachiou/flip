@@ -70,7 +70,7 @@ use yii\helpers\Url;
 <?= $form->field($model, "img[]")->fileInput(['multiple' => true]) ?>
 
 
-<?= Html::submitButton("Crear", ["class" => "btn btn-primary"])?>
+<?= Html::submitButton("Crear", ["class" => "btn btn-success"])?>
 
 <?php $form->end() ?>
 

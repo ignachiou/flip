@@ -15,7 +15,9 @@ AppAsset::register($this);
 <html lang="<?= Yii::$app->language ?>">
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/index.css" media="screen" />
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -29,11 +31,11 @@ AppAsset::register($this);
                 'brandLabel' => 'BIBLIOTHECA',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
-                    'class' => 'navbar-inverse navbar-fixed-top',
+                    'class' => 'my-navbar navbar-fixed-top',
                 ],
             ]);
             echo nav::widget([
-                'options' => ['class' => 'navbar-nav navbar-left'],
+                'options' => ['class' => 'navbar-nav navbar-left', 'style'=>'color:black;'],
                 'items' => [
                     ['label' => 'Inicio', 'url' => ['/site/index']],
                 		['label' => 'Busqueda', 'items' =>[

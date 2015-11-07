@@ -27,43 +27,43 @@ public function rules()
   return [
    ['id_objeto', 'integer', 'message' => 'Id incorrecto'],
    ['nombre_objeto_bibliografico', 'required', 'message' => 'Campo requerido'],
-   ['nombre_objeto_bibliografico', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
-   ['nombre_objeto_bibliografico', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],
+   ['nombre_objeto_bibliografico', 'match', 'pattern' => '/^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'Solo se aceptan letras'],
+   ['nombre_objeto_bibliografico', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'MÃ­nimo 3 mÃ¡ximo 50 caracteres'],
    ['autor', 'required', 'message' => 'Campo requerido'],
-   ['autor', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras'],
-   ['autor', 'match', 'pattern' => '/^.{3,80}$/', 'message' => 'Mínimo 3 máximo 80 caracteres'],
+   ['autor', 'match', 'pattern' => '/^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'SÃ²lo se aceptan letras'],
+   ['autor', 'match', 'pattern' => '/^.{3,80}$/', 'message' => 'MÃ­nimo 3 mÃ¡ximo 80 caracteres'],
    ['editorial', 'required', 'message' => 'Campo requerido'],
-   ['editorial', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras'],
-   ['editorial', 'match', 'pattern' => '/^.{3,80}$/', 'message' => 'Mínimo 3 máximo 80 caracteres'],
+   ['editorial', 'match', 'pattern' => '/^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'SÃ³lo se aceptan letras'],
+   ['editorial', 'match', 'pattern' => '/^.{3,80}$/', 'message' => 'MÃ­nimo 3 mÃ¡ximo 80 caracteres'],
    ['fecha', 'required', 'message' => 'Campo requerido'],
    ['fecha', 'match', 'pattern' => '/^[0-9\s]+$/i', 'message' => 'solo se aceptan numeros'],
-   ['fecha', 'match', 'pattern' => '/^.{1,5}$/', 'message' => 'Mínimo 1 máximo 5 caracteres'],   
+   ['fecha', 'match', 'pattern' => '/^.{1,5}$/', 'message' => 'MÃ­nimo 1 mÃ¡ximo 5 caracteres'],   
    ['resumen', 'required', 'message' => 'Campo requerido'],
-   ['resumen', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
-   ['resumen', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],
+   ['resumen', 'match', 'pattern' => '/^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'Solo se aceptan letras'],
+   ['resumen', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'MÃ­nimo 3 mÃ¡ximo 50 caracteres'],
    ['isbn', 'required', 'message' => 'Campo requerido'],
-   ['isbn', 'match', 'pattern' => '/^[0-9a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras y numeros'],
-   ['isbn', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],
+   ['isbn', 'match', 'pattern' => '/^[0-9a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'Solo se aceptan letras y numeros'],
+   ['isbn', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'MÃ­nimo 3 mÃ¡ximo 50 caracteres'],
    ['descriptor_a', 'required', 'message' => 'Campo requerido'],
-   ['descriptor_a', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
-   ['descriptor_a', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],
+   ['descriptor_a', 'match', 'pattern' => '/^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'Solo se aceptan letras'],
+   ['descriptor_a', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'MÃ­nimo 3 mÃ¡ximo 50 caracteres'],
    ['descriptor_b', 'required', 'message' => 'Campo requerido'],
-   ['descriptor_b', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
-   ['descriptor_b', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],
-   ['descriptor_c', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
-   ['descriptor_c', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],
-   ['descriptor_d', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
-   ['descriptor_d', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],
+   ['descriptor_b', 'match', 'pattern' => '/^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'Solo se aceptan letras'],
+   ['descriptor_b', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'MÃ­nimo 3 mÃ¡ximo 50 caracteres'],
+   ['descriptor_c', 'match', 'pattern' => '/^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'Solo se aceptan letras'],
+   ['descriptor_c', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'MÃ­nimo 3 mÃ¡ximo 50 caracteres'],
+   ['descriptor_d', 'match', 'pattern' => '/^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±\s]+$/i', 'message' => 'Solo se aceptan letras'],
+   ['descriptor_d', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'MÃ­nimo 3 mÃ¡ximo 50 caracteres'],
   		['img', 'file',/*'skipOnEmpty' => false,*/
   		'uploadRequired' => 'No has seleccionado ningun archivo', //Error
   		//'maxSize' => 1024*1024*1, //1 MB
-  		//'tooBig' => 'El tamaño máximo permitido es 1MB', //Error
+  		//'tooBig' => 'El tamaï¿½o mï¿½ximo permitido es 1MB', //Error
   		//'minSize' => 10, //10 Bytes
-  		//'tooSmall' => 'El tamaño mínimo permitido son 10 BYTES', //Error
+  		//'tooSmall' => 'El tamaï¿½o mï¿½nimo permitido son 10 BYTES', //Error
   		'extensions' => 'jpg, gif,png',
-  		'wrongExtension' => 'El archivo {img} no contiene una extensión permitida {extensions}', //Error
+  		'wrongExtension' => 'El archivo {img} no contiene una extensiÃ³n permitida {extensions}', //Error
   		'maxFiles' => 500,
-  		'tooMany' => 'El máximo de archivos permitidos son {limit}', //Error
+  		'tooMany' => 'El mÃ¡ximo de archivos permitidos son {limit}', //Error
   		],
   		
   		
@@ -73,7 +73,13 @@ public function rules()
  public function attributeLabels()
  {
  	return [
- 			'img' => 'Seleccionar imagenes en formato .jpg .gif o .png:',
+ 			'nombre_objeto_bibliografico' => 'Nombre de la Mnografia',
+ 			'img' => 'Seleccionar imagenes en formato .jpg :',
+ 			'fecha'=> 'AÃ±o de PublicaciÃ³n',
+ 			'descriptor_a' =>'Descriptor 1',
+ 			'descriptor_b' => 'Descriptor 2',
+ 			'descriptor_c' => 'Descriptor 3',
+ 			'descriptor_d' => 'Descriptor 4',
  	];
  }
  

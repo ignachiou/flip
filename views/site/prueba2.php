@@ -55,6 +55,7 @@ if (is_dir($path)){
 		echo "$path no es un directorio";
 	}
 	?>
+	
 
 <div id="canvas" >
 <font color="white">sdfsd</font>
@@ -76,13 +77,13 @@ if (is_dir($path)){
 
 <div id="contenedorNegro" style="background-color:#000; width:230px; position: absolute; top: 50px; left:0px; height: 595px;">
 
-  <div id="contenedorBiblio" style="background-color:#aaaaaa;  position: absolute; top:315px; left:0px; height: 300px; width:230px;">
+  <div id="contenedorBiblio" style="background-color:#000033;  position: absolute; top:315px; left:0px; height: 300px; width:230px;">
   	<div id="titlePageBiblio" style="background-color:#2E2E2E; height: 30px;">
 			<font color="white">Bibliografia</font>
 		</div>
   	
   </div>
-  <div id="contenedorPages" style="background-color:#aaaaaa;  position: absolute; top:0px; left:0px; height: 300px; width:230px;">
+  <div id="contenedorPages" style="background-color:#000033;  position: absolute; top:0px; left:0px; height: 300px; width:230px;">
 	<div id="titlePageBox">
 		<div id="titlePageHeader" style="background-color:#2E2E2E; height: 30px;">
 			<font color="white">P&aacute;ginas</font>
@@ -115,8 +116,6 @@ if (is_dir($path)){
 </div>
 
 <script type="text/javascript">
-
-
 							
 
 function addPage(page, book) {

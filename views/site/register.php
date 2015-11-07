@@ -22,6 +22,18 @@ use yii\widgets\ActiveForm;
 </div>
 
 <div class="form-group">
+ <?= $form->field($model, "nombre")->input("text") ?>   
+</div>
+
+<div class="form-group">
+ <?= $form->field($model, "apellido")->input("text") ?>   
+</div>
+
+<div class="form-group">
+ <?= $form->field($model, "nacionalidad")->input("text") ?>   
+</div>
+
+<div class="form-group">
  <?= $form->field($model, "clave")->input("password") ?>   
 </div>
 
@@ -29,6 +41,6 @@ use yii\widgets\ActiveForm;
  <?= $form->field($model, "repita_clave")->input("password") ?>   
 </div>
 
-<?= Html::submitButton("Registrate", ["class" => "btn btn-primary"]) ?>
+<?= Html::submitButton("Registrate", ["class" => "btn btn-success"]) ?>
 
 <?php $form->end() ?>

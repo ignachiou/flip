@@ -18,14 +18,15 @@ use yii\widgets\LinkPager;
 </div>
 
 <center><?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
-<?= Html::a("Crear Tesis",'index.php?r=site%2Fcreartesis',["class" => "btn btn-success"])?></center>
+<?php ?></center>
 
 <?php $f->end() ?>
 
 <h3><?= $search ?></h3>	
 
 <center><h3> Catalogo de Tesis </h3></center>
-<table class= " table table-bordered">
+<center><?= Html::a("Crear Tesis",'index.php?r=site%2Fcreartesis',["class" => "btn btn-success"])?></center><br>
+<table class= " table table-striped">
 	<tr>
 	
 		<th> ID Tesis</th>

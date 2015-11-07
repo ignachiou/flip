@@ -22,10 +22,10 @@ class FormAct extends model{
         	['rol', 'integer'],
         	['id', 'integer', 'message' => 'Id incorrecto'],
             [['usuario', 'email',], 'required', 'message' => 'Campo requerido'],
-            ['usuario', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'MÌnimo 3 y m·ximo 50 caracteres'],
-            ['usuario', 'match', 'pattern' => "/^[0-9a-z]+$/i", 'message' => 'SÛlo se aceptan letras y n˙meros'],
-            ['email', 'match', 'pattern' => "/^.{5,80}$/", 'message' => 'MÌnimo 5 y m·ximo 80 caracteres'],
-            ['email', 'email', 'message' => 'Formato no v·lido'],
+            ['usuario', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'M√≠nimo 3 y m√°ximo 50 caracteres'],
+            ['usuario', 'match', 'pattern' => "/^[0-9a-z√°√©√≠√≥√∫√±]+$/i", 'message' => 'S√≥lo se aceptan letras y nÔøΩmeros'],
+            ['email', 'match', 'pattern' => "/^.{5,80}$/", 'message' => 'M√≥nimo 5 y m√°ximo 80 caracteres'],
+            ['email', 'email', 'message' => 'Formato no v√°lido'],
         ];
     }
  

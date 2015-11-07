@@ -26,12 +26,15 @@ use yii\widgets\LinkPager;
 <h3><?= $search ?></h3>
 
 <center><h3>Control de Usuarios</h3></center>
-<table class= " table table-bordered">
+<table class= " table table-striped">
 	<tr>
 	
 		<th> ID Usuario</th>
 		<th>Usuario</th>
 		<th>Email</th>
+		<th>Nombre</th>
+		<th>Apellido</th>
+		<th>Nacionalidad</th>
 		<th>Rol</th>
 		<th></th>
 		<th></th>
@@ -42,7 +45,10 @@ use yii\widgets\LinkPager;
 		<td><?= $row->id?></td>
 		<td><?= $row->usuario?></td>
 		<td><?= $row->email?></td>
-		<td><?= $row->rol?></td>
+		<td><?= $row->nombre?></td>
+		<td><?= $row->apellido?></td>
+		<td><?= $row->nacionalidad?></td>
+		<td><?= $row->rol?></td>		
 		<td><a href= "<?= Url::toRoute(["site/actualizarusuario", "id" => $row->id]) ?>"><?= Html::submitButton("Editar", ["class" => "btn btn-warning"])?></a></td>
 		<td>
             <a href="#" data-toggle="modal" data-target="#id<?= $row->id ?>"><?= Html::submitButton("Eliminar", ["class" => "btn btn-danger"])?></a>

@@ -53,10 +53,10 @@ class Articulo extends \yii\db\ActiveRecord
             'titulo_articulo' => 'Titulo Articulo',
             'autor_articulo' => 'Autor Articulo',
             'resumen_articulo' => 'Resumen Articulo',
-            'desc1' => 'Desc1',
-            'desc2' => 'Desc2',
-            'desc3' => 'Desc3',
-            'desc4' => 'Desc4',
+            'desc1' => 'Descriptor 1',
+            'desc2' => 'Descriptor 2',
+            'desc3' => 'Descriptor 3',
+            'desc4' => 'Descriptor 4',
         	'pagina' => 'Pagina del Articulo'
         ];
     }

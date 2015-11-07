@@ -1,0 +1,127 @@
+.my-navbar{
+	
+    background-color: #000033;
+    
+}
+.active{
+	background-color: #EEEEEE;
+	color:#286090;
+	
+}
+
+.active a{
+	
+	color:#286090;
+	
+}
+
+
+
+a.navbar-brand{	
+	color: white;
+}
+
+
+
+li a{
+	color: white;	
+}
+
+#w2 {	
+	background-color: #000033;
+}
+
+#w2 li a{
+	color:#ffffff;
+	background-color:#000033;
+	
+}
+
+#w2 li.active a{
+	background-color:#EEEEEE;
+	color:#286090;
+	
+}
+
+#w2 li a:hover{
+	color:#286090;
+	background-color:#EEEEEE;	
+}
+
+#w3 {
+	background-color:#000033;
+	}
+
+#w3 li a{
+	color:#ffffff;
+	background-color:#000033;
+	
+}
+
+#w3 li.active a{
+	background-color:#EEEEEE;
+	color:#286090;
+	
+}
+
+#w3 li a:hover{
+	color:#286090;
+	background-color:#EEEEEE;	
+}
+
+#w4 {
+
+	background-color: #000033;
+}
+
+#w4 li a{
+	color:#ffffff;
+	background-color:#000033;
+	
+}
+
+#w4 li.active a{
+	background-color:#EEEEEE;
+	color:#286090;
+	
+}
+
+#w4 li a:hover{
+	color:#286090;
+	background-color:#EEEEEE;	
+}
+
+#w5 {
+
+	background-color: #000033;
+}
+
+#w5 li a{
+	color:#ffffff;
+	background-color:#000033;
+	
+}
+
+#w5 li.active a{
+	background-color:#EEEEEE;
+	color:#286090;
+	
+}
+
+#w5 li a:hover{
+	color:#286090;
+	background-color:#EEEEEE;	
+}
+
+
+
+button.btn.btn-primary{
+	color: #ffffff;
+	background-color: #000033;
+}
+
+#pageListTable td:hover{
+	background-color: #EEEEEE;
+	
+}
+

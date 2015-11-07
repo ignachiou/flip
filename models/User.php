@@ -6,8 +6,11 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
 {
     
     public $id;
-    public $usuario;
+    public $usuario;    
     public $email;
+    public $nombre;
+    public $apellido;
+    public $nacionalidad;
     public $clave;
     public $authKey;
     public $accessToken;
