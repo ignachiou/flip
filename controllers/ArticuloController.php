@@ -8,28 +8,97 @@ use app\models\ArticuloSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\User;
+use yii\filters\AccessControl;
 
-/**
- * ArticuloController implements the CRUD actions for Articulo model.
- */
 class ArticuloController extends Controller
 {
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
+	
+	function init(){
+	
+		if (!\Yii::$app->user->isGuest) {
+	
+			if(User::isUserSimple(Yii::$app->user->identity->id)){
+				$this->layout = 'simplelayout';
+			}
+	
+			if(User::isUserCatalog(Yii::$app->user->identity->id)){
+				$this->layout = 'cataloglayout';
+			}
+	
+			if(User::isUserAdmin(Yii::$app->user->identity->id)){
+				$this->layout = 'adminlayout';
+			}
+	
+	
+		}
+	}
+	
+public function behaviors() //funcion de control de roles
+{
+    return [
+        'access' => [
+            'class' => AccessControl::className(),
+            'only' => ['logout','update','create'],
+            'rules' => [
+                [
+                    //El administrador tiene permisos sobre las siguientes acciones
+                    'actions' => ['logout',],
+                    //Esta propiedad establece que tiene permisos
+                    'allow' => true,
+                    //Usuarios autenticados, el signo ? es para invitados
+                    'roles' => ['@'],
+                    //Este m�todo nos permite crear un filtro sobre la identidad del usuario
+                    //y as� establecer si tiene permisos o no
+                    'matchCallback' => function ($rule, $action) {
+                        //Llamada al m�todo que comprueba si es un administrador
+                        return User::isUserAdmin(Yii::$app->user->identity->id);
+                    },
                 ],
+                [
+                //Los usuarios catalog tienen permisos sobre las siguientes acciones
+                'actions' => ['logout',],
+                //Esta propiedad establece que tiene permisos
+                'allow' => true,
+                //Usuarios autenticados, el signo ? es para invitados
+                'roles' => ['@'],
+                //Este m�todo nos permite crear un filtro sobre la identidad del usuario
+                //y as� establecer si tiene permisos o no
+                'matchCallback' => function ($rule, $action) {
+                	//Llamada al m�todo que comprueba si es un usuario simple
+                	return User::isUserCatalog(Yii::$app->user->identity->id);
+                },
+                ],
+                [
+                   //Los usuarios simples tienen permisos sobre las siguientes acciones
+                   'actions' => ['logout'],
+                   //Esta propiedad establece que tiene permisos
+                   'allow' => true,
+                   //Usuarios autenticados, el signo ? es para invitados
+                   'roles' => ['@'],
+                   //Este m�todo nos permite crear un filtro sobre la identidad del usuario
+                   //y as� establecer si tiene permisos o no
+                   'matchCallback' => function ($rule, $action) {
+                      //Llamada al m�todo que comprueba si es un usuario simple
+                      return User::isUserSimple(Yii::$app->user->identity->id);
+                  },
+               ],
+               
+               
             ],
-        ];
-    }
+        ],
+ //Controla el modo en que se accede a las acciones, en este ejemplo a la acción logout
+ //sólo se puede acceder a través del método post
+        'verbs' => [
+            'class' => VerbFilter::className(),
+            'actions' => [
+                'logout' => ['post'],
+            ],
+        ],
+    ];
+}
 
-    /**
-     * Lists all Articulo models.
-     * @return mixed
-     */
+   
     public function actionIndex()
     {
         $searchModel = new ArticuloSearch();
@@ -41,11 +110,7 @@ class ArticuloController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single Articulo model.
-     * @param integer $id
-     * @return mixed
-     */
+    
     public function actionView($id)
     {
         return $this->render('view', [
@@ -53,11 +118,7 @@ class ArticuloController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Articulo model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
+    
     public function actionCreate()
     {
         $model = new Articulo();
@@ -71,12 +132,7 @@ class ArticuloController extends Controller
         }
     }
 
-    /**
-     * Updates an existing Articulo model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
+   
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -90,12 +146,7 @@ class ArticuloController extends Controller
         }
     }
 
-    /**
-     * Deletes an existing Articulo model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
+   
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
@@ -103,13 +154,7 @@ class ArticuloController extends Controller
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Articulo model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Articulo the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+    
     protected function findModel($id)
     {
         if (($model = Articulo::findOne($id)) !== null) {

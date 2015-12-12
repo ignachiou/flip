@@ -5,17 +5,15 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Revista */
 
-$this->title = 'Update Revista: ' . ' ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Revistas', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Actualizar revista: ' . ' ' . $model->id;
 ?>
 <div class="revista-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,
+    	'modelsArticulo' => $modelsArticulo,
+    	'modelsPagina' => $modelsPagina,
     ]) ?>
 
 </div>

@@ -2,9 +2,9 @@
 
 namespace app\models;
 use Yii;
-use yii\base\model;
+use yii\base\Model;
 
-class FormTesis extends model{
+class FormTesis extends Model{
 	
 	public $id_tesis;
 	public $titulo;
@@ -28,7 +28,7 @@ class FormTesis extends model{
 				['id_tesis', 'integer', 'message' => 'Id incorrecto'],
 				['titulo', 'required', 'message' => 'Campo requerido'],
 				['titulo', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
-				['titulo', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 máximo 50 caracteres'],
+				['titulo', 'match', 'pattern' => '/^.{3,500}$/', 'message' => 'Mínimo 3 máximo 500 caracteres'],
 				['redactor', 'required', 'message' => 'Campo requerido'],
 				['redactor', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras'],
 				['redactor', 'match', 'pattern' => '/^.{3,80}$/', 'message' => 'Mínimo 3 máximo 80 caracteres'],
@@ -37,6 +37,7 @@ class FormTesis extends model{
 				['tutor', 'match', 'pattern' => '/^.{3,80}$/', 'message' => 'Mínimo 3 máximo 80 caracteres'],
 				['cotutor', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras'],
 				['cotutor', 'match', 'pattern' => '/^.{3,80}$/', 'message' => 'Mínimo 3 máximo 80 caracteres'],
+				['universidad', 'required', 'message' => 'Campo requerido'],
 				['universidad', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras'],
 				['universidad', 'match', 'pattern' => '/^.{3,80}$/', 'message' => 'Mínimo 3 máximo 80 caracteres'],
 				['fecha_de_publicacion', 'required', 'message' => 'Campo requerido'],
@@ -44,7 +45,7 @@ class FormTesis extends model{
 				['fecha_de_publicacion', 'match', 'pattern' => '/^.{1,5}$/', 'message' => 'Mínimo 1 máximo 5 caracteres'],
 				['resumen', 'required', 'message' => 'Campo requerido'],
 				['resumen', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
-				['resumen', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'M�nimo 3 caracteres  máximo 50 caracteres'],
+				['resumen', 'match', 'pattern' => '/^.{3,2000}$/', 'message' => 'Mínimo 3 caracteres  máximo 50 caracteres'],
 				['descriptor1_tesis', 'required', 'message' => 'Campo requerido'],
 				['descriptor1_tesis', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Solo se aceptan letras'],
 				['descriptor1_tesis', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 caracteres y máximo 50 caracteres'],
@@ -74,12 +75,13 @@ class FormTesis extends model{
 	public function attributeLabels()
 	{
 		return [
+				'titulo' => 'Título',
 				'img' => 'Seleccionar imagenes en formato .jpg :',
-				'fecha' => 'Año de Publicación',
-				'descriptor4_tesis' =>'Descriptor 4',
+				'fecha' => 'Año de Publicación',				
 				'descriptor1_tesis' => 'Descriptor 1',
 				'descriptor3_tesis' => 'Descriptor 3',
 				'descriptor2_tesis' => 'Descriptor 2',
+				'descriptor4_tesis' =>'Descriptor 4',
 		];
 	}
 }

@@ -8,12 +8,8 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
-use app\models\ValidarObjetoBibliografico;
 use yii\widgets\ActiveForm;
-use yii\widgets\XIIPMooViewer;
-use yii\web\response;
-use app\models\FormObj;
-use app\models\Objeto;
+use yii\web\Response;
 use app\models\Buscar;
 use yii\helpers\Html;
 use yii\data\Pagination;
@@ -21,20 +17,17 @@ use yii\helpers\Url;
 use app\models\FormRegister;
 use app\models\Usuarios;
 use app\models\User;
-use yii\db\TableSchema;
-use yii\web\UploadedFile;
-use app\models\FormUpload;
-use app\models\app\models;
+use app\models;
 use app\models\FormAct;
-use app\models\FormTesis;
-use app\models\Tesis;
-use app\models\FormRevista;
 use app\models\DbRevista;
-use app\models\FormArticulo;
-use app\models\Articulo;
-use app\models\DbArticulo;
-
-
+use yii\web\Session;
+use app\models\FormRecoverPass;
+use app\models\FormResetPass;
+use app\models\ObjetoSearch;
+use app\models\TesisSearch;
+use app\models\RevistaSearch;
+use app\models\ArticuloSearch;
+ 
 
 class SiteController extends Controller
 {
@@ -59,6 +52,161 @@ class SiteController extends Controller
 		}
 	}
 	
+	public function actionRecoverpass()
+	{
+		//Instancia para validar el formulario
+		$model = new FormRecoverPass;
+	
+		//Mensaje que será mostrado al usuario en la vista
+		$msg = null;
+	
+		if ($model->load(Yii::$app->request->post()))
+		{
+			if ($model->validate())
+			{
+				//Buscar al usuario a través del email
+				$table = Usuarios::find()->where("email=:email", [":email" => $model->email]);
+				 
+				//Si el usuario existe
+				if ($table->count() == 1)
+				{
+					//Crear variables de sesión para limitar el tiempo de restablecido del password
+					//hasta que el navegador se cierre
+					$session = new Session;
+					$session->open();
+	
+					//Esta clave aleatoria se cargará en un campo oculto del formulario de reseteado
+					$session["recover"] = $this->randKey("abcdef0123456789", 200);
+					$recover = $session["recover"];
+	
+					//También almacenaremos el id del usuario en una variable de sesión
+					//El id del usuario es requerido para generar la consulta a la tabla users y
+					//restablecer el password del usuario
+					$table = Usuarios::find()->where("email=:email", [":email" => $model->email])->one();
+					$session["id_recover"] = $table->id;
+	
+					//Esta variable contiene un número hexadecimal que será enviado en el correo al usuario
+					//para que lo introduzca en un campo del formulario de reseteado
+					//Es guardada en el registro correspondiente de la tabla users
+					$verification_code = $this->randKey("abcdef0123456789", 8);
+					//Columna verification_code
+					$table->verification_code = $verification_code;
+					//Guardamos los cambios en la tabla users
+					$table->save();
+	
+					//Creamos el mensaje que será enviado a la cuenta de correo del usuario
+					$subject = "Recuperar clave";
+					$body = "<p>Copie el siguiente código de verificación para restablecer su clave: ";
+					$body .= "<strong>".$verification_code."</strong></p>";
+					$body .= "<p><a href='http://localhost/flip/web/index.php?r=site/resetpass'>Recuperar clave</a></p>";
+	
+					//Enviamos el correo
+					Yii::$app->mailer->compose()
+					->setTo($model->email)
+					->setFrom([Yii::$app->params["adminEmail"] => Yii::$app->params["title"]])
+					->setSubject($subject)
+					->setHtmlBody($body)
+					->send();
+	
+					//Vaciar el campo del formulario
+					$model->email = null;
+	
+					//Mostrar el mensaje al usuario
+					$msg = "Se a enviado un mensaje a su correo para la recuperación de su clave";
+				}
+				else //El usuario no existe
+				{
+					$msg = "Ha ocurrido un error, el usuario no existe";
+				}
+			}
+			else
+			{
+				$model->getErrors();
+			}
+		}
+		return $this->render("recoverpass", ["model" => $model, "msg" => $msg]);
+	}
+	
+	public function actionResetpass()
+	{
+		//Instancia para validar el formulario
+		$model = new FormResetPass;
+	
+		//Mensaje que será mostrado al usuario
+		$msg = null;
+	
+		//Abrimos la sesión
+		$session = new Session;
+		$session->open();
+	
+		//Si no existen las variables de sesión requeridas lo expulsamos a la página de inicio
+		if (empty($session["recover"]) || empty($session["id_recover"]))
+		{
+			return $this->redirect(["site/index"]);
+		}
+		else
+		{
+	
+			$recover = $session["recover"];
+			//El valor de esta variable de sesión la cargamos en el campo recover del formulario
+			$model->recover = $recover;
+	
+			//Esta variable contiene el id del usuario que solicitó restablecer el password
+			//La utilizaremos para realizar la consulta a la tabla users
+			$id_recover = $session["id_recover"];
+	
+		}
+	
+		//Si el formulario es enviado para resetear el password
+		if ($model->load(Yii::$app->request->post()))
+		{
+			if ($model->validate())
+			{
+				//Si el valor de la variable de sesión recover es correcta
+				if ($recover == $model->recover)
+				{
+					//Preparamos la consulta para resetear el password, requerimos el email, el id
+					//del usuario que fue guardado en una variable de session y el código de verificación
+					//que fue enviado en el correo al usuario y que fue guardado en el registro
+					$table = Usuarios::findOne(["email" => $model->email, "id" => $id_recover, "verification_code" => $model->verification_code]);
+	
+					//Encriptar el password
+					$table->clave = crypt($model->clave, Yii::$app->params["salt"]);
+	
+					//Si la actualización se lleva a cabo correctamente
+					if ($table->save())
+					{
+						 
+						//Destruir las variables de sesión
+						$session->destroy();
+						 
+						//Vaciar los campos del formulario
+						$model->email = null;
+						$model->clave = null;
+						$model->password_repeat = null;
+						$model->recover = null;
+						$model->verification_code = null;
+						 
+						$msg = "Has restablecido la clave correctamente, redireccionando";
+						$msg .= "<meta http-equiv='refresh' content='5; ".Url::toRoute("site/login")."'>";
+					}
+					else
+					{
+						$msg = "Ha ocurrido un error";
+					}
+	
+				}
+				else
+				{
+					$model->getErrors();
+				}
+			}
+		}
+	
+		return $this->render("resetpass", ["model" => $model, "msg" => $msg]);
+	
+	}
+	
 	
 	
 	public function actionPrueba()
@@ -67,299 +215,7 @@ class SiteController extends Controller
 		return $this->render("prueba"); #pruebas del vizualizador
 	}
 	
-	public function actionPrueba1()
-	{
-	
-		return $this->render("prueba1"); #pruebas del vizualizador
-	}
-	
-	public function actionPrueba2()
-	{
-	
-		return $this->render("prueba2"); #pruebas del vizualizador
-	}
-	
-	
-	
-	public function actionMostrar()
-	{	
-		$msg = null;
-		$dirname = "C:/xampp/htdocs/basic/imagenes/monografias/11/";
-		$images = glob($dirname."*.jpg");
-		foreach($images as $image) {
-			echo '<img src="'.$image.'" /><br />';
-		}
-		
-		
-		/*$posts[1] = 'prueba numero 1';
-		$msg = null;
-		
-		if(dirname("C:/xampp/htdocs/basic/imagenes/56/1.jpg"))
-		{
-		
-			foreach ($posts as $post)
-			{
-				$url = 'C:/xampp/htdocs/basic/imagenes/56/1.jpg';
-				if (preg_match('#<img src="([\w./-_]+)"#i', $post, $matches))
-					{
-						$url = $matches[1];
-					}	
-			
-			}
-
-			
-		}
-		else 
-		{
-			$msg = "la carpeta a la que quiere acceder no existe";
-		}*/
-	
-		return $this->render("mostrar",["msg" => $msg]);
-	}
-	
-	public function actionVer(){
-		
-		return $this->render("ver");
-	}
-	
-	public function actionUpload()
-	{
-	
-		$model = new FormUpload;
-		$msg = null;
-	
-		if ($model->load(Yii::$app->request->post()))
-		{
-			$model->file = UploadedFile::getInstances($model, 'file');
-	
-			if ($model->file && $model->validate()) {
-				foreach ($model->file as $file) {
-					$file->saveAs('C:/xampp/htdocs/basic/imagenes/' . $file->baseName . '.' . $file->extension);
-					$msg = "<p><strong class='label label-info'>subida realizada con �xito</strong></p>";
-				}
-			}
-		}
-		return $this->render("upload", ["model" => $model, "msg" => $msg]);
-	}
-	
-public function actionSimple() #pagina de inicio de un usuario rol 1
-{
-		/*$table = new Objeto;
-		
-		$model = $table->find()->all();
-		*/
-		
-		$form = new Buscar;
-		$search = null;//guardamos la busqueda realizada en esta variable
-		if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-		{
-			if ($form->validate())//validamos el campo
-			{
-				$search = Html::encode($form->m); //evita ataques xss 
-				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-				$query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-				$model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-				*/
-				$query = Objeto::find()
-				->Where(["like","nombre",$search])
-				->orwhere(["like","autor",$search])
-				->orwhere(["like","editorial",$search])
-				->orwhere(["like","fecha",$search])
-				->orwhere(["like","desc1",$search])
-				->orwhere(["like","desc2",$search])
-				->orwhere(["like","desc3",$search])
-				->orwhere(["like","desc4",$search]);
-				$countQuery = clone $query;
-				$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-				$model = $query->offset($pages->offset)
-				->limit($pages->limit)
-				->all();
 				
-			}
-			
-			else {
-				$form->getErrors();
-				
-			}
-			
-		}
-		else 
-		{
-			$query = Objeto::find();
-			$countQuery = clone $query;
-			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-			$model = $query->offset($pages->offset)
-			->limit($pages->limit)
-			->all();
-			
-		}
-		
-		return $this->render("simple",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
-	}
-	
-	public function actionTesis() #pagina donde realizaremos busquedas del tipo tesis
-	{
-		/*$table = new Objeto;
-	
-		$model = $table->find()->all();
-		*/
-	
-		$form = new Buscar;
-		$search = null;//guardamos la busqueda realizada en esta variable
-		if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-		{
-			if ($form->validate())//validamos el campo
-			{
-				$search = Html::encode($form->t); //evita ataques xss
-				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-					$query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-					$model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-				*/
-				$query = Tesis::find()
-				->Where(["like","titulo_tesis",$search])
-				->orwhere(["like","redactor_tesis",$search])
-				->orwhere(["like","tutor_tesis",$search])
-				->orwhere(["like","fecha_tesis",$search])
-				->orwhere(["like","desc1_tesis",$search])
-				->orwhere(["like","desc2_tesis",$search])
-				->orwhere(["like","desc3_tesis",$search])
-				->orwhere(["like","desc4_tesis",$search]);
-				$countQuery = clone $query;
-				$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-				$model = $query->offset($pages->offset)
-				->limit($pages->limit)
-				->all();
-	
-			}
-				
-			else {
-				$form->getErrors();
-	
-			}
-				
-		}
-		else
-		{
-			$query = Tesis::find();
-			$countQuery = clone $query;
-			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-			$model = $query->offset($pages->offset)
-			->limit($pages->limit)
-			->all();
-				
-		}
-	
-		return $this->render("tesis",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
-	}
-
-	public function actionPublicaciones() #pagina donde realizaremos busquedas del tipo publicaciones
-	{
-		/*$table = new Objeto;
-	
-		$model = $table->find()->all();
-		*/
-	
-		$form = new Buscar;
-		$search = null;//guardamos la busqueda realizada en esta variable
-		if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-		{
-			if ($form->validate())//validamos el campo
-			{
-				$search = Html::encode($form->p); //evita ataques xss
-				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-				 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-				 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-				*/
-				$query = DbRevista::find()
-				->Where(["like","titulo_revista",$search])
-				->orwhere(["like","editorial_revista",$search])
-				->orwhere(["like","issn_revista",$search])
-				->orwhere(["like","fecha_revista",$search])
-				->orwhere(["like","desc1",$search])
-				->orwhere(["like","desc2",$search])
-				->orwhere(["like","desc3",$search])
-				->orwhere(["like","desc4",$search]);
-				$countQuery = clone $query;
-				$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-				$model = $query->offset($pages->offset)
-				->limit($pages->limit)
-				->all();
-	
-			}
-	
-			else {
-				$form->getErrors();
-	
-			}
-	
-		}
-		else
-		{
-			$query = DbRevista::find();
-			$countQuery = clone $query;
-			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-			$model = $query->offset($pages->offset)
-			->limit($pages->limit)
-			->all();
-	
-		}
-	
-		return $this->render("publicaciones",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
-	}
-	
-	public function actionArticulo() #pagina donde realizaremos busqueda de articulos
-	{
-		/*$table = new Objeto;
-	
-		$model = $table->find()->all();
-		*/
-	
-		$form = new Buscar;
-		$search = null;//guardamos la busqueda realizada en esta variable
-		if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-		{
-			if ($form->validate())//validamos el campo
-			{
-				$search = Html::encode($form->a); //evita ataques xss
-				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-				 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-				 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-				*/
-				$query = DbArticulo::find()
-				->Where(["like","titulo_articulo",$search])
-				->orwhere(["like","autor_articulo",$search])
-				->orwhere(["like","desc1",$search])
-				->orwhere(["like","desc2",$search])
-				->orwhere(["like","desc3",$search])
-				->orwhere(["like","desc4",$search]);
-				$countQuery = clone $query;
-				$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-				$model = $query->offset($pages->offset)
-				->limit($pages->limit)
-				->all();
-	
-			}
-	
-			else {
-				$form->getErrors();
-	
-			}
-	
-		}
-		else
-		{
-			$query = DbArticulo::find();
-			$countQuery = clone $query;
-			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-			$model = $query->offset($pages->offset)
-			->limit($pages->limit)
-			->all();
-	
-		}
-	
-		return $this->render("articulo",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
-	}
-	
 	
 public function actionCatalog()
 {
@@ -375,7 +231,7 @@ public function actionAdmin() //#pagina donde visualizamos los usuarios registra
 	
 	$model = $table->find()->all();
 	*/
-	
+	$msg =null;
 	$form = new Buscar;
 	$search = null; 	#guardamos la busqueda realizada en esta variable
 	if($form->load(Yii::$app->request->get()))#cuando el formulario de busqueda es enviado
@@ -391,7 +247,7 @@ public function actionAdmin() //#pagina donde visualizamos los usuarios registra
 			->where(["like","id",$search])
 			->orwhere(["like","usuario",$search])
 			->orwhere(["like","email",$search])
-			->orwhere(["like","role",$search])
+			->orwhere(["like","rol",$search])
 			->orwhere(["like","nombre",$search])
 			->orwhere(["like","apellido",$search])
 			->orwhere(["like","nacionalidad",$search]);
@@ -400,11 +256,13 @@ public function actionAdmin() //#pagina donde visualizamos los usuarios registra
 			$model = $query->offset($pages->offset)
 			->limit($pages->limit)
 			->all();
-	
+			
+			
 		}
 			
 		else {
 			$form->getErrors();
+			
 	
 		}
 			
@@ -417,10 +275,12 @@ public function actionAdmin() //#pagina donde visualizamos los usuarios registra
 		$model = $query->offset($pages->offset)
 		->limit($pages->limit)
 		->all();
+		
+		
 			
 	}
 	
-	return $this->render("admin",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
+	return $this->render("admin",[ 'model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
 	
 	
 	//return $this->render("admin");
@@ -596,7 +456,7 @@ public function actionEliminarusuario()
  
  public function actionRegister()
  {
-  //Creamos la instancia con el model de validaci�n
+  //Creamos la instancia con el model de validación
   $model = new FormRegister;
    
   //Mostrar� un mensaje en la vista cuando el usuario se haya registrado
@@ -678,997 +538,6 @@ public function actionEliminarusuario()
   }
   return $this->render("register", ["model" => $model, "msg" => $msg]);
  }
- 
- public function actionActualizarrevista()
- {
- 	$model = new FormRevista;
- 	$msg = null;
- 
- 	if($model->load(Yii::$app->request->post()))
- 	{
- 		if($model->validate())
- 		{
- 			$table = DbRevista::findOne($model->id);
- 			if($table)
- 			{
- 				$table->titulo_revista = $model->titulo_revista;
- 				$table->editorial_revista = $model->editorial_revista;
- 				$table->volumen_revista = $model->volumen_revista;
- 				$table->fasciculo_revista = $model->fasciculo_revista;
- 				$table->fecha_revista = $model->fecha_revista;
- 				$table->issn_revista = $model->issn_revista;
- 				$table->periodicidad_revista = $model->periodicidad_revista;
- 				$table->desc1 = $model->desc1;
- 				$table->desc2 = $model->desc;
- 				$table->desc3 = $model->desc;
- 				$table->desc4= $model->desc;
- 				if ($table->update())
- 				{
- 					$msg = "La Revista ha sido actualizado correctamente";
- 				}
- 				else
- 				{
- 					$msg = "La Revista no ha podido ser actualizado";
- 				}
- 			}
- 			else
- 			{
- 				$msg = "La Revista seleccionado no ha sido encontrado";
- 			}
- 		}
- 		else
- 		{
- 			$model->getErrors();
- 		}
- 	}
- 
- 
- 	if (Yii::$app->request->get("id"))
- 	{
- 		$id = Html::encode($_GET["id"]);
- 		if ((int) $id)
- 		{
- 			$table = DbRevista::findOne($id);
- 			if($table)
- 			{
- 				$model->id = $table->id;
- 				$model->titulo_revista= $table->titulo_revista; 				
- 				$model->editorial_revista = $table->editorial_revista;
- 				$model->volumen_revista= $table->volumen_revista;
- 				$model->fasciculo_revista = $table->fasciculo_revista;
- 				$model->fecha_revista = $table->fecha_revista;
- 				$model->issn_revista = $table->issn_revista;
- 				$model->periodicidad_revista = $table->periodicidad_revista;				
- 				$model->desc1 = $table->desc1;
- 				$model->desc2 = $table->desc2;
- 				$model->desc3 = $table->desc3;
- 				$model->desc4 = $table->desc4;
- 
- 
- 			}
- 			else
- 			{
- 				return $this->redirect(["site/registrosrevista"]);
- 			}
- 		}
- 		else
- 		{
- 			return $this->redirect(["site/registrosrevista"]);
- 		}
- 	}
- 	else
- 	{
- 		return $this->redirect(["site/registrosrevista"]);
- 	}
- 	return $this->render("actualizarrevista", ["model" => $model, "msg" => $msg]);
- }
-	
- public function actionActualizartesis()
- {
- 	$model = new FormTesis;
- 	$msg = null;
- 
- 	if($model->load(Yii::$app->request->post()))
- 	{
- 		if($model->validate())
- 		{
- 			$table = Tesis::findOne($model->id_tesis);
- 			if($table)
- 			{
- 				$table->titulo_tesis = $model->titulo;
- 				$table->redactor_tesis = $model->redactor;
- 				$table->tutor_tesis = $model->tutor;
- 				$table->cotutor_tesis = $model->cotutor;
- 				$table->fecha_tesis = $model->fecha_de_publicacion;
- 				$table->universidad = $model->universidad;
- 				$table->resumen_tesis = $model->resumen;
- 				$table->desc1_tesis = $model->descriptor1_tesis;
- 				$table->desc2_tesis = $model->descriptor2_tesis;
- 				$table->desc3_tesis = $model->descriptor3_tesis;
- 				$table->desc4_tesis = $model->descriptor4_tesis;
- 				if ($table->update())
- 				{
- 					$msg = "La Tesis ha sido actualizada correctamente";
- 					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrostesis")."'>";
- 				}
- 				else
- 				{
- 					$msg = "La Tesis no ha podido ser actualizado";
- 				}
- 			}
- 			else
- 			{
- 				$msg = "La Tesis seleccionado no ha sido encontrado";
- 			}
- 		}
- 		else
- 		{
- 			$model->getErrors();
- 		}
- 	}
- 
- 
- 	if (Yii::$app->request->get("id_tesis"))
- 	{
- 		$id_tesis = Html::encode($_GET["id_tesis"]);
- 		if ((int) $id_tesis)
- 		{
- 			$table = Tesis::findOne($id_tesis);
- 			if($table)
- 			{
- 				$model->id_tesis = $table->id_tesis;
- 				$model->titulo= $table->titulo_tesis;
- 				$model->redactor = $table->redactor_tesis;
- 				$model->tutor = $table->tutor_tesis;
- 				$model->cotutor = $table->cotutor_tesis;
- 				$model->fecha_de_publicacion = $table->fecha_tesis;
- 				$model->universidad = $table->universidad;
- 				$model->resumen = $table->resumen_tesis;
- 				$model->descriptor1_tesis = $table->desc1_tesis;
- 				$model->descriptor2_tesis = $table->desc2_tesis;
- 				$model->descriptor3_tesis = $table->desc3_tesis;
- 				$model->descriptor4_tesis = $table->desc4_tesis;
- 
- 
- 			}
- 			else
- 			{
- 				return $this->redirect(["site/registrostesis"]);
- 			}
- 		}
- 		else
- 		{
- 			return $this->redirect(["site/registrostesis"]);
- 		}
- 	}
- 	else
- 	{
- 		return $this->redirect(["site/registrostesis"]);
- 	}
- 	return $this->render("actualizartesis", ["model" => $model, "msg" => $msg]);
- }
- 
-public function actionActualizar()
- {
- 	$model = new FormObj;
- 	$msg = null;
- 
- 	if($model->load(Yii::$app->request->post()))
- 	{
- 		if($model->validate())
- 		{
- 			$table = Objeto::findOne($model->id_objeto);
- 			if($table)
- 			{
- 				$table->nombre = $model->nombre_objeto_bibliografico;
- 				$table->autor = $model->autor;
- 				$table->editorial = $model->editorial;
- 				$table->fecha = $model->fecha;
- 				$table->isbn = $model->isbn;
- 				$table->resumen = $model->resumen;
- 				$table->desc1 = $model->descriptor_a;
- 				$table->desc2 = $model->descriptor_b;
- 				$table->desc3 = $model->descriptor_c;
- 				$table->desc4 = $model->descriptor_d;
- 				if ($table->update())
- 				{
- 					$msg = "La Monografia ha sido actualizado correctamente";
- 					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registros")."'>";
- 				}
- 				else
- 				{
- 					$msg = "La Monografia no ha podido ser actualizado";
- 				}
- 			}
- 			else
- 			{
- 				$msg = "La Monografia seleccionado no ha sido encontrado";
- 			}
- 		}
- 		else
- 		{
- 			$model->getErrors();
- 		}
- 	}
- 
- 
- 	if (Yii::$app->request->get("id_objeto"))
- 	{
- 		$id_objeto = Html::encode($_GET["id_objeto"]);
- 		if ((int) $id_objeto)
- 		{
- 			$table = Objeto::findOne($id_objeto);
- 			if($table)
- 			{
- 				$model->id_objeto = $table->id_objeto;
- 				$model->nombre_objeto_bibliografico= $table->nombre;
- 				$model->autor = $table->autor;
- 				$model->editorial = $table->editorial;
- 				$model->fecha = $table->fecha;
- 				$model->isbn = $table->isbn;
- 				$model->resumen = $table->resumen;
- 				$model->descriptor_a = $table->desc1;
- 				$model->descriptor_b = $table->desc2;
- 				$model->descriptor_c = $table->desc3;
- 				$model->descriptor_d = $table->desc4;
- 
- 
- 			}
- 			else
- 			{
- 				$msj = "No se realizo ninguna clase de actualizacion";
- 				return $this->redirect(["site/actualizar"]);
- 			}
- 		}
- 		else
- 		{
- 			$msj = "No se realizo ninguna clase de actualizacion";
- 			return $this->redirect(["site/actualizar"]);
- 		}
- 	}
- 	else
- 	{
- 		$msj = "No se realizo ninguna clase de actualizacion";
- 		return $this->redirect(["site/actualizar"]);
- 	}
- 	return $this->render("actualizar", ["model" => $model, "msg" => $msg]);
- }
-	
-	public function actionEliminarrevista()
-	{
-		if(Yii::$app->request->post())
-		{
-			$id = Html::encode($_POST["id"]);
-			if((int) $id)
-			{
-				if(DbRevista::deleteAll("id=:id", [":id" => $id]))
-				{
-					echo"Revista con la ID $id, ha sido eliminado. Redireccionando";
-					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrosrevista")."'> ";
-	
-					//eliminamos todos los archivos y el directorio que los contiene
-					//primero se deben eliminar los archivos de la carpeta antes de poder eliminar la carpeta como tal
-	
-	
-	
-					{
-						foreach (glob("imagenes/revista/".$id."/*.*") as $archivos_carpeta)
-						{
-							unlink($archivos_carpeta); //eliminamos todos los archivos dentro de la carpeta
-						}
-						rmdir("imagenes/revista/".$id); //eliminamos la carpeta.
-							
-					}
-				}
-				else
-				{
-					echo "H ocurrido un ERROR al tratar de eliminar la publicacion periodica, redireccionamos ";
-					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrosrevista")."'> ";
-	
-				}
-	
-			}
-			else
-			{
-				echo "H ocurrido un ERROR al tratar de eliminar la publicacion periodica, redireccionamos ";
-				echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrosrevista")."'> ";
-	
-			}
-		}
-		else
-		{
-	
-			return$this->redirect(["site/registrosrevista"]);
-		}
-	
-	}
-	
-	public function actionEliminartesis()
-	{
-		if(Yii::$app->request->post())
-		{
-			$id_tesis = Html::encode($_POST["id_tesis"]);
-			if((int) $id_tesis)
-			{
-				if(Tesis::deleteAll("id_tesis=:id_tesis", [":id_tesis" => $id_tesis]))
-				{
-					echo"Tesis con la ID $id_tesis, ha sido eliminado. Redireccionando";
-					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrostesis")."'> ";
-	
-					//eliminamos todos los archivos y el directorio que los contiene
-					//primero se deben eliminar los archivos de la carpeta antes de poder eliminar la carpeta como tal
-						
-						
-						
-					{
-						foreach (glob("imagenes/tesis/".$id_tesis."/*.*") as $archivos_carpeta)
-						{
-							unlink($archivos_carpeta); //eliminamos todos los archivos dentro de la carpeta
-						}
-						rmdir("imagenes/tesis/".$id_tesis); //eliminamos la carpeta.
-							
-					}
-				}
-				else
-				{
-					echo "Ha ocurrido un ERROR al tratar de eliminar la tesis, redireccionamos ";
-					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrostesis")."'> ";
-						
-				}
-	
-			}
-			else
-			{
-				echo "Ha ocurrido un ERROR al tratar de eliminar la tesis, redireccionamos ";
-				echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registrostesis")."'> ";
-	
-			}
-		}
-		else
-		{
-				
-			return$this->redirect(["site/registrostesis"]);
-		}
-	
-	}
-	
-	public function actionEliminar()
-	{
-		if(Yii::$app->request->post())
-		{
-			$id_objeto = Html::encode($_POST["id_objeto"]);
-			if((int) $id_objeto)
-			{
-				if(Objeto::deleteAll("id_objeto=:id_objeto", [":id_objeto" => $id_objeto]))
-				{
-					echo"Objeto Bibliografico con la ID $id_objeto, ha sido eliminado. Redireccionando";
-					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registros")."'> ";
-										
-				//eliminamos todos los archivos y el directorio que los contiene
-				//primero se deben eliminar los archivos de la carpeta antes de poder eliminar la carpeta como tal
-									
-					{
-						foreach (glob("imagenes/monografias/".$id_objeto."/*.*") as $archivos_carpeta)
-						{
-							unlink($archivos_carpeta); //eliminamos todos los archivos dentro de la carpeta							
-						}
-						rmdir("imagenes/monografias/".$id_objeto); //eliminamos la carpeta.
-					
-					}
-				}
-				else 
-				{
-					echo "H ocurrido un ERROR al tratar de eliminar el Objeto Bibliografico, redireccionamos ";
-					echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registros")."'> ";
-					
-				}
-				
-			}
-			else
-			 {
-				echo "H ocurrido un ERROR al tratar de eliminar el Objeto Bibliografico, redireccionamos ";
-				echo "<meta http-equiv='refresh' content='3; ".Url::toRoute("site/registros")."'> ";	
-				
-			}
-		}
-		else
-		 {
-			
-			return$this->redirect(["site/registros"]);	
-		}
-		
-	}
-	
-	public function actionRegistrosrevista(){
-		
-		
-		$form = new Buscar;
-		$search = null;//guardamos la busqueda realizada en esta variable
-	
-		if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-		{
-			if ($form->validate())//validamos el campo
-			{
-				$search = Html::encode($form->p); //evita ataques xss
-				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-				 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-				 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-				*/
-				$query = DbRevista::find()
-				->where(["like","id",$search])
-				->orWhere(["like","titulo_revista",$search])
-				->orwhere(["like","editorial_revista",$search])
-				->orwhere(["like","issn_revista",$search])
-				->orwhere(["like","desc1",$search])
-				->orwhere(["like","desc2",$search])
-				->orwhere(["like","desc3",$search])
-				->orwhere(["like","desc4",$search]);
-				$countQuery = clone $query;
-				$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-				$model = $query->offset($pages->offset)
-				->limit($pages->limit)
-				->all();
-	
-			}
-	
-	
-	
-			else {
-				$form->getErrors();
-	
-			}
-	
-	
-	
-		}
-		else
-		{
-			$query = DbRevista::find();
-			$countQuery = clone $query;
-			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-			$model = $query->offset($pages->offset)
-			->limit($pages->limit)
-			->all();
-	
-		}
-	
-	
-		return $this->render("registrosrevista",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
-	
-	}
-	
-	
-	public function actionRegistrostesis(){
-		
-		
-		$form = new Buscar;
-		$search = null;//guardamos la busqueda realizada en esta variable
-		
-		if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-		{
-			if ($form->validate())//validamos el campo
-			{
-				$search = Html::encode($form->t); //evita ataques xss
-				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-				 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-				 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-				*/
-				$query = Tesis::find()
-				->where(["like","id_tesis",$search])
-				->orWhere(["like","titulo_tesis",$search])
-				->orwhere(["like","redactor_tesis",$search])
-				->orwhere(["like","tutor_tesis",$search])
-				->orwhere(["like","cotutor_tesis",$search])
-				->orwhere(["like","fecha_tesis",$search])
-				->orwhere(["like","universidad",$search])
-				->orwhere(["like","resumen_tesis",$search])
-				->orwhere(["like","desc1_tesis",$search])
-				->orwhere(["like","desc2_tesis",$search])
-				->orwhere(["like","desc3_tesis",$search])
-				->orwhere(["like","desc4_tesis",$search]);
-				$countQuery = clone $query;
-				$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-				$model = $query->offset($pages->offset)
-				->limit($pages->limit)
-				->all();
-		
-			}
-		
-		
-		
-			else {
-				$form->getErrors();
-		
-			}
-		
-		
-		
-		}
-		else
-		{
-			$query = Tesis::find();
-			$countQuery = clone $query;
-			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-			$model = $query->offset($pages->offset)
-			->limit($pages->limit)
-			->all();
-		
-		}
-		
-		
-		return $this->render("registrostesis",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
-		
-	}
-	
-	public function actionRegistros() //se crea una tabla con todos los registros que existen en la base de datos, 
-									  //ademas podemos realizar busquedas en ella
-	{
-		
-		/*$table = new Objeto;
-		
-		$model = $table->find()->all();
-		*/
-		
-		$form = new Buscar;
-		$search = null;//guardamos la busqueda realizada en esta variable
-		if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-		{
-			if ($form->validate())//validamos el campo
-			{
-				$search = Html::encode($form->m); //evita ataques xss 
-				/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-				$query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-				$model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-				*/
-				$query = Objeto::find()
-				->where(["like","id_objeto",$search])
-				->orwhere(["like","nombre",$search])
-				->orwhere(["like","autor",$search])
-				->orwhere(["like","editorial",$search])
-				->orwhere(["like","fecha",$search])
-				->orwhere(["like","resumen",$search])				
-				->orWhere(["like","isbn",$search])
-				->orwhere(["like","desc1",$search])
-				->orwhere(["like","desc2",$search])
-				->orwhere(["like","desc3",$search])
-				->orwhere(["like","desc4",$search]);
-				$countQuery = clone $query;
-				$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-				$model = $query->offset($pages->offset)
-				->limit($pages->limit)
-				->all();
-				
-			}
-			
-			
-			
-			else {
-				$form->getErrors();
-				
-			}
-			
-			
-			
-		}
-		else 
-		{
-			$query = Objeto::find();
-			$countQuery = clone $query;
-			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-			$model = $query->offset($pages->offset)
-			->limit($pages->limit)
-			->all();
-			
-		}
-		
-		
-		
-		
-		return $this->render("registros",['model' => $model, "form" => $form, "search" => $search, "pages" => $pages]);
-	}
-	
-	public function actionCreararticulo() //creamos los objetos bibliograficos que seran insertados en la tabla de la Base de Datos
-	{
-		
-		$model = new FormArticulo;
-		$modelsArticulo = [new Articulo];
-		$msg = null;
-		$query = null;
-		
-		/*$servername = "localhost";
-		$username = "root";
-		$password = "";
-		$dbname = "biblio";
-		
-		// Create connection
-		$conn = new mysqli($servername, $username, $password, $dbname);
-		// Check connection
-		if ($conn->connect_error) {
-			die("Connection failed: " . $conn->connect_error);
-		}
-		
-		$sql = "SELECT max(id_revista) FROM revista";
-		$result = $conn->query($sql);*
-		
-		
-		// output data of each row
-		// $row = $result;
-		$row = $result->fetch_assoc();
-		$last = $row["max(id_revista)"];
-		//return $last;*/
-/*************************************************************************************************************************************/
-		
-	
-		if($model->load(Yii::$app->request->post())) //se utiliza el metodo post para una url limpia
-		{
-	
-	
-			if($model->validate() )
-			{
-				
-				$table = new Articulo;
-				
-			
-								
-				//$model1 = Articulo::getLastId();
-							
-				$table->titulo_articulo = $model->titulo_articulo;
-				$table->resumen_articulo = $model->resumen;
-				$table->autor_articulo = $model->autor;
-				//$table->url_articulo = 'C:/xampp/htdocs/basic/imagenes/revista/';
-				
-				$table->id_revista = $model->id_revista;
-				
-				$table->desc1_articulo = $model->descriptor_1;
-				$table->desc2_articulo = $model->descriptor_2;
-				$table->desc3_articulo = $model->descriptor_3;
-				$table->desc4_articulo = $model->descriptor_4;
-	
-				
-				}
-				if($table->insert() )
-				{
-	
-					$id = $table->id_articulo;
-					$msg = "Has subido los datos de la revista con ID unica ".$id." de manera correcta";
-					$model-> titulo_articulo = null;
-					$model -> id_revista = null;
-					$model-> resumen = null;
-					$model-> autor = null;
-					$model-> descriptor_1 = null;
-					$model-> descriptor_2 = null;
-					$model-> descriptor_3 = null;
-					$model-> descriptor_4 = null;
-				
-	
-					return $this->redirect(["site/registrosrevista"]);
-						
-				}
-				else
-				{
-					$model->getErrors();
-	
-				}
-					
-					
-			}		
-			
-		return $this->render("creararticulo",['model' => $model, 'msg' => $msg,  'modelsArticulo' => (empty($modelsArticulo)) ? [new Articulo] : $modelsArticulo]);
-	}
-	
-	public function actionCrearrevista() //creamos los objetos bibliograficos que seran insertados en la tabla de la Base de Datos
-	{
-		
-		$model = new FormRevista;
-		$msg = null;
-	
-		if($model->load(Yii::$app->request->post())) //se utiliza el metodo post para una url limpia
-		{
-	
-	
-			if($model->validate() && $model->img)
-			{
-				$table = new Revista;
-				$table->titulo_revista = $model->titulo;
-				$table->editorial_revista = $model->editorial;
-				$table->publicacion_revista = $model->publicacion;
-				$table->serie_revista = $model->serie;
-				$table->fecha_revista= $model->fecha_de_publicacion;
-				$table->issn_revista = $model->issn;
-				$table->url_revista = 'imagenes/revista/';
-				$table->distribucion_revista = $model->distribucion;
-				$table->volumen_revista = $model->volumen;
-				$table->periodicidad_revista = $model->periodicidad;
-				$table->desc1_revista = $model->descriptor_1;
-				$table->desc2_revista = $model->descriptor_2;
-				$table->desc3_revista = $model->descriptor_3;
-				$table->desc4_revista = $model->descriptor_4;
-				
-				$model->img;
-	
-				if($table->insert() )
-				{
-	
-					$id = $table->id_revista;
-					$msg = "Has subido los datos de la revista con ID unica ".$id ." de manera correcta";
-					$model-> titulo = null;
-					$model-> editorial = null;
-					$model-> publicacion = null;
-					$model-> serie = null;
-					$model-> fecha_de_publicacion = null;
-					$model-> issn = null;
-					$model-> distribucion = null;
-					$model-> volumen = null;
-					$model-> periodicidad = null;
-					$model-> descriptor_1 = null;
-					$model-> descriptor_2 = null;
-					$model-> descriptor_3 = null;
-					$model-> descriptor_4 = null;
-					$model->img = UploadedFile::getInstances($model, 'img');
-	
-	
-	
-					if (!is_dir('imagenes/revista/'.$id))  // creo directorios dentro de imagenes con la id
-						{													// del OB donde guardare las imagenes.
-							
-						mkdir('imagenes/revista/'.$id, 777);//le otorgo permiso de lectura y escritura
-							
-	
-						}
-	
-						if($model->img && is_dir('imagenes/revista/'.$id))
-						{ //pendiente error al validar el modelo de las imagenes
-							
-						foreach ($model->img as $img)
-						{
-						$img->saveAs('imagenes/revista/'.$id."/". $img->baseName . '.' . $img->extension);
-						//$msg = "<p><strong class='label label-info'>subida de archivos lograda con exito</strong></p>";
-						}
-							
-						}
-	
-						else
-						{
-						$msg = "No se ha creado ninguna carpeta o no se ha podido realizar la subida de imagenes";
-							
-						}
-	
-					
-					
-				}
-				else
-				{
-					$model->getErrors();
-	
-				}
-					
-				return $this->redirect(["site/creararticulo"]);
-			}
-	
-		}
-			
-		return $this->render("crearrevista",['model' => $model, 'msg' => $msg]);
-	}
-	
-	
-	public function actionCreartesis() //creamos los objetos bibliograficos que seran insertados en la tabla de la Base de Datos
-	{
-		
-		$model = new FormTesis;
-		$msg = null;
-	
-		if($model->load(Yii::$app->request->post())) //se utiliza el metodo post para una url limpia
-		{
-				
-				
-			if($model->validate() && $model->img)
-			{
-				$table = new Tesis;
-				$table->titulo_tesis = $model->titulo;
-				$table->redactor_tesis = $model->redactor;
-				$table->tutor_tesis = $model->tutor;
-				$table->cotutor_tesis = $model->cotutor;				
-				$table->fecha_tesis = $model->fecha_de_publicacion;
-				$table->universidad = $model->universidad;
-				$table->resumen_tesis = $model->resumen;
-				$table->url = 'imagenes/tesis/';
-				$table->desc1_tesis = $model->descriptor1_tesis;
-				$table->desc2_tesis = $model->descriptor2_tesis;
-				$table->desc3_tesis = $model->descriptor3_tesis;
-				$table->desc4_tesis = $model->descriptor4_tesis;
-	
-				$model->img;
-	
-				if($table->insert() )
-				{
-						
-					$id = $table->id_tesis;
-					$msg = "Has subido los datos de la Tesis con ID unica ".$id ." de manera correcta";
-					$model-> titulo = null;
-					$model-> redactor = null;
-					$model-> tutor = null;
-					$model-> cotutor = null;
-					$model-> universidad = null;
-					$model-> resumen = null;
-					$model-> fecha_de_publicacion = null;
-					$model-> descriptor1_tesis = null;
-					$model-> descriptor2_tesis = null;
-					$model-> descriptor3_tesis = null;
-					$model-> descriptor4_tesis = null;
-					
-					$model->img = UploadedFile::getInstances($model, 'img');
-						
-						
-						
-					if (!is_dir('imagenes/tesis/'.$id))  // creo directorios dentro de imagenes con la id
-					{													// del OB donde guardare las imagenes.
-					
-					mkdir('imagenes/tesis/'.$id, 777);//le otorgo permiso de lectura y escritura
-				
-											
-					}
-					
-					if($model->img && is_dir('imagenes/tesis/'.$id))
-					{ //pendiente error al validar el modelo de las imagenes
-					
-						foreach ($model->img as $img)
-						{
-							$img->saveAs('imagenes/tesis/'.$id."/". $img->baseName . '.' . $img->extension);
-							//$msg = "<p><strong class='label label-info'>subida de archivos lograda con exito</strong></p>";
-							
-							
-						}
-						return $this->redirect(["site/registrostesis"]);
-					
-					}
-						
-					else
-					{
-						$msg = "No se ha creado ninguna carpeta o no se ha podido realizar la subida de imagenes";
-					
-					}		
-							
-				}
-				else
-				{
-					$model->getErrors();
-	
-				}
-					
-					
-			}
-	
-		}
-			
-		return $this->render("creartesis",['model' => $model, 'msg' => $msg]);
-	}
-	
-	
-	
-	public function actionCrear() //creamos los objetos bibliograficos que seran insertados en la tabla de la Base de Datos
-	{
-		
-		$model = new FormObj;
-		$msg = null;
-		
-		if($model->load(Yii::$app->request->post())) //se utiliza el metodo post para una url limpia
-		{
-			
-			
-			if($model->validate() && $model->img)
-			{
-				$table = new Objeto;
-				$table->nombre = $model->nombre_objeto_bibliografico;
-				$table->autor = $model->autor;
-				$table->editorial = $model->editorial;
-				$table->fecha = $model->fecha; 
-				$table->resumen = $model->resumen;
-				$table->url = 'imagenes/monografias/';
-				$table->isbn = $model->isbn;
-				$table->desc1 = $model->descriptor_a;
-				$table->desc2 = $model->descriptor_b;
-				$table->desc3 = $model->descriptor_c;
-				$table->desc4 = $model->descriptor_d;
-				
-				$img = $model->img;					
-				
-				if($table->insert() )
-				{				
-					
-					$id = $table->id_objeto;
-					$msg = "Has subido los datos de la Monografia con ID unica ".$id ."de manera correcta";
-					$model-> nombre_objeto_bibliografico = null;
-					$model-> autor = null;
-					$model-> editorial = null;
-					$model-> fecha = null;
-					$model-> resumen = null;					
-					$model->isbn = null;
-					$model-> descriptor_a = null;
-					$model-> descriptor_b = null;
-					$model-> descriptor_c = null;
-					$model-> descriptor_d = null;
-					$model->img = UploadedFile::getInstances($model, 'img');						
-					
-					
-					
-					if (!is_dir('imagenes/monografias/'.$id))  // creo directorios dentro de imagenes con la id
-					{													// del OB donde guardare las imagenes.
-					
-					mkdir('imagenes/monografias/'.$id, 777);//le otorgo permiso de lectura y escritura
-				
-											
-					}
-					
-					if($model->img && is_dir('imagenes/monografias/'.$id))
-					{ //pendiente error al validar el modelo de las imagenes
-					
-						foreach ($model->img as $img)
-						{
-							$img->saveAs('imagenes/monografias/'.$id."/". $img->baseName . '.' . $img->extension);
-							//$msg = "<p><strong class='label label-info'>subida de archivos lograda con exito</strong></p>";
-							
-							
-						}
-						return $this->redirect(["site/registros"]);
-					
-					}
-						
-					else
-					{
-						$msg = "No se ha creado ninguna carpeta o no se ha podido realizar la subida de imagenes";
-					
-					}		
-							
-			}
-			else
-			{
-				$model->getErrors();
-		
-			}
-			
-			
-		  }
-		
-		}
-					
-		return $this->render("crear",['model' => $model, 'msg' => $msg]);
-	}
-		
-	
-	public function actionValidarobjeto() //ejemplo de como validar un objeto
-	{
-		
-		
-		
-		$model = new ValidarObjetoBibliografico;
-		$msg = null;
-		
-		if($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax)
-		{
-			Yii::$app->response->format = Response::FORMAT_JSON;
-			return ActiveForm::validate($model);	
-			
-		}
-		if($model->load(Yii::$app->request->post()))
-		{ 
-			
-			if ($model->validate()){
-				
-				//aca va la consulta a la base de datos
-				$msg = "Cargado el Objeto Bibliografico exitosamente".id_objeto;
-				$model->nombre_objeto = null; //limpiamos los campos
-				}
-				else {
-					$model->getError();
-					
-				}
-			
-		}
-		
-		return $this->render("validarobjeto", ['model' => $model, 'msg' => $msg]);
-	}
-	
-	
 	
 	
 public function behaviors() //funcion de control de roles
@@ -1676,7 +545,7 @@ public function behaviors() //funcion de control de roles
     return [
         'access' => [
             'class' => AccessControl::className(),
-            'only' => ['mostrar','ver','viewer', 'crear', 'registros', 'admin', 'editarusuario','creartesis','registrostesis','','registrosrevista','crearrevista','actualizar','actualizartesis','actualizarrevista','aaaaa'],
+            'only' => ['mostrar','ver','viewer', 'crear', 'registros', 'admin', 'editarusuario','creartesis','registrostesis','','registrosrevista','crearrevista','actualizar','actualizartesis','actualizarrevista'],
             'rules' => [
                 [
                     //El administrador tiene permisos sobre las siguientes acciones
@@ -1748,200 +617,54 @@ public function behaviors() //funcion de control de roles
         ];
     }
 
-    public function actionIndex()
+ public function actionIndex()
     {
-    	$form = new Buscar;
-    	$search = null;//guardamos la busqueda realizada en esta variable
-    	if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-    	{
-    		if ($form->validate())//validamos el campo
-    		{
-    			$search = Html::encode($form->m); //evita ataques xss
-    			/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-    			 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-    			 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-    			*/
-    			$query = Objeto::find()
-    			->where(["like","nombre",$search])
-    			->orwhere(["like","autor",$search])
-    			->orwhere(["like","editorial",$search])
-    			->orwhere(["like","fecha",$search])
-    			->orwhere(["like","isbn",$search]);
-    			$countQuery = clone $query;
-    			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-    			$model = $query->offset($pages->offset)
-    			->limit($pages->limit)
-    			->all();
-    	
-    		}
-    			
-    		else {
-    			$form->getErrors();
-    	
-    		}
-    			
-    	}
-    	else
-    	{
-    		$query = Objeto::find();
-    		$countQuery = clone $query;
-    		$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-    		$model = $query->offset($pages->offset)
-    		->limit($pages->limit)
-    		->all();
-    			
-    	}
-        return $this->render('index',['model' => $model, 'form' => $form, 'search' => $search, 'pages' => $pages]);
+        $searchModel = new ObjetoSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
    
     public function actionIndexp()
-    {
-    	$form = new Buscar;
-    	$search = null;//guardamos la busqueda realizada en esta variable
-    	if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-    	{
-    		if ($form->validate())//validamos el campo
-    		{
-    			$search = Html::encode($form->p); //evita ataques xss
-    			/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-    			 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-    			 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-    			*/
-    			$query = DbRevista::find()
-    			->where(["like","titulo_revista",$search])
-    			->orwhere(["like","editorial_revista",$search])
-    			->orwhere(["like","issn_revista",$search])
-    			->orwhere(["like","fecha_revista",$search])
-    			->orwhere(["like","desc1",$search])
-    			->orwhere(["like","desc2",$search])
-    			->orwhere(["like","desc3",$search])
-    			->orwhere(["like","desc4",$search]);
-    			$countQuery = clone $query;
-    			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-    			$model = $query->offset($pages->offset)
-    			->limit($pages->limit)
-    			->all();
-    
-    		}
-    		 
-    		else {
-    			$form->getErrors();
-    
-    		}
-    		 
-    	}
-    	else
-    	{
-    		$query = DbRevista::find();
-    		$countQuery = clone $query;
-    		$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-    		$model = $query->offset($pages->offset)
-    		->limit($pages->limit)
-    		->all();
-    		 
-    	}
-    	return $this->render('indexp',['model' => $model, 'form' => $form, 'search' => $search, 'pages' => $pages]);
+{
+        $searchModel = new RevistaSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('indexp', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
     
     public function actionIndext()
-    {
-    	$form = new Buscar;
-    	$search = null;//guardamos la busqueda realizada en esta variable
-    	if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-    	{
-    		if ($form->validate())//validamos el campo
-    		{
-    			$search = Html::encode($form->t); //evita ataques xss
-    			/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-    			 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-    			 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-    			*/
-    			$query = Tesis::find()
-    			->where(["like","titulo_tesis",$search])
-    			->orwhere(["like","redactor_tesis",$search])
-    			->orwhere(["like","tutor_tesis",$search])
-    			->orwhere(["like","fecha_tesis",$search])
-    			->orwhere(["like","desc1_tesis",$search])
-    			->orwhere(["like","desc2_tesis",$search])
-    			->orwhere(["like","desc3_tesis",$search])
-    			->orwhere(["like","desc4_tesis",$search]);
-    			$countQuery = clone $query;
-    			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-    			$model = $query->offset($pages->offset)
-    			->limit($pages->limit)
-    			->all();
-    
-    		}
-    		 
-    		else {
-    			$form->getErrors();
-    
-    		}
-    		 
-    	}
-    	else
-    	{
-    		$query = Tesis::find();
-    		$countQuery = clone $query;
-    		$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-    		$model = $query->offset($pages->offset)
-    		->limit($pages->limit)
-    		->all();
-    		 
-    	}
-    	return $this->render('indext',['model' => $model, 'form' => $form, 'search' => $search, 'pages' => $pages]);
+{
+        $searchModel = new TesisSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('indext', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
     
     public function actionIndexa()
-    {
-    	$form = new Buscar;
-    	$search = null;//guardamos la busqueda realizada en esta variable
-    	if($form->load(Yii::$app->request->get()))//cuando el formulario de busqueda es enviado
-    	{
-    		if ($form->validate())//validamos el campo
-    		{
-    			$search = Html::encode($form->a); //evita ataques xss
-    			/*$query = "SELECT * FROM objeto WHERE id_objeto LIKE '%$search%' OR ";//realizamos una consulta SQL
-    			 $query .= "nombre LIKE '%$search%' OR autor LIKE '%$search%'";
-    			 $model = $table->findBySql($query)->all(); //extrae todos los registros que coincidan con la consulta almacenando en models
-    			*/
-    			$query = DbArticulo::find()
-    			->where(["like","titulo_articulo",$search])
-    			->orwhere(["like","autor_articulo",$search])
-    			->orwhere(["like","desc1",$search])
-    			->orwhere(["like","desc2",$search])
-    			->orwhere(["like","desc3",$search])
-    			->orwhere(["like","desc4",$search]);
-    			$countQuery = clone $query;
-    			$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-    			$model = $query->offset($pages->offset)
-    			->limit($pages->limit)
-    			->all();
-    
-    		}
-    		 
-    		else {
-    			$form->getErrors();
-    
-    		}
-    		 
-    	}
-    	else
-    	{
-    		$query = DbArticulo::find();
-    		$countQuery = clone $query;
-    		$pages = new Pagination(['pageSize' => 10,'totalCount' => $countQuery->count()]);
-    		$model = $query->offset($pages->offset)
-    		->limit($pages->limit)
-    		->all();
-    		 
-    	}
-    	return $this->render('indexa',['model' => $model, 'form' => $form, 'search' => $search, 'pages' => $pages]);
+{
+        $searchModel = new ArticuloSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('indexa', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
     
     public function actionLogin()
-    	{
-    		if (!\Yii::$app->user->isGuest) {
+    	{	
+    		if (!\Yii::$app->user->isGuest) 
+    		{
 
 				if (User::isUserAdmin(Yii::$app->user->identity->id))
 				{
@@ -1950,29 +673,29 @@ public function behaviors() //funcion de control de roles
 				}
 				if (User::isUserCatalog(Yii::$app->user->identity->id))
 				{
-					return $this->redirect(["site/registros"]);
+					return $this->redirect(["objeto/index"]);
 				}
 				else
 				{
  					return $this->redirect(["site/index"]);
 				}
-     	}
+     		}
 
-        $model = new LoginForm();
-		if ($model->load(Yii::$app->request->post()) && $model->login()) 
-		{
-        	if (User::isUserAdmin(Yii::$app->user->identity->id))
+        	$model = new LoginForm();
+			if ($model->load(Yii::$app->request->post()) && $model->login()) 
 			{
- 				return $this->redirect(["site/admin"]);
-			}
-			if  (User::isUserCatalog(Yii::$app->user->identity->id))
-			{
-				return $this->redirect(["site/registros"]);
-			}
-			else
-			{
- 				return $this->redirect(["site/index"]);
-			}
+        		if (User::isUserAdmin(Yii::$app->user->identity->id))
+				{
+ 					return $this->redirect(["site/admin"]);
+				}
+				if  (User::isUserCatalog(Yii::$app->user->identity->id))
+				{
+					return $this->redirect(["objeto/index"]);
+				}
+				else
+				{
+ 					return $this->redirect(["site/index"]);
+				}
 
      		} else {
          		return $this->render('login', [

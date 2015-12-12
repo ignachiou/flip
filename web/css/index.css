@@ -1,8 +1,31 @@
+body{
+	background-color:#EEEEEE;
+	
+}
+
 .my-navbar{
 	
     background-color: #000033;
     
 }
+
+button.navbar-toggle{
+	background-color: #EEEEEE;
+		
+}
+
+.frontImage{
+	width:45%;
+	height:35%;
+	align:center;
+	
+}
+
+span.icon-bar{
+	
+	background-color: #000033;
+}
+
 .active{
 	background-color: #EEEEEE;
 	color:#286090;
@@ -26,6 +49,7 @@ a.navbar-brand{
 li a{
 	color: white;	
 }
+
 
 #w2 {	
 	background-color: #000033;
@@ -125,3 +149,71 @@ button.btn.btn-primary{
 	
 }
 
+#pageSelect {
+	color: #2E2E2E;
+	}
+
+
+
+#containerNegro{
+	background-color:black;
+	 width:16%; 
+	 position: absolute; 
+	 top: 50px; 
+	 left:0%;
+	 height: 95%;
+	
+}
+
+#containerBiblio{ 
+	background-color:#EEEEEE;  
+	position: absolute; 
+	top:304px; 
+	left:0%; 
+	height: 100%; 
+	width:100%;	
+}
+#titlePageBiblio{
+	
+	background-color:#2E2E2E; 
+	height: 5%;
+}
+
+#contenedorPages{
+	background-color:#EEEEEE; 
+	position: absolute; 
+	top:5px;
+	left:0px;
+	height: 300px; 
+	width:100%;
+	
+}
+
+#pageListDiv{
+	
+	position: absolute;
+	left:2%; 
+	top: 12%; 	
+	height: 200px; 
+	overflow:auto;	
+	border: solid 1px #000033;
+	blackground-color: #EEEEEE;	
+	
+}
+
+#linking{
+	position: absolute; 
+	bottom:10%; 
+	left:;
+	
+}
+
+@media screen and (max-width: 1100px){
+
+	#containerNegro{
+	
+	display:none;
+	
+	}
+	
+}

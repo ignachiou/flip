@@ -2,10 +2,10 @@
 
 namespace app\models;
 use Yii;
-use yii\base\model;
+use yii\base\Model;
 use app\models\Usuarios;
 
-class FormRegister extends model{
+class FormRegister extends Model{
 	
 	public $id;
     public $usuario;

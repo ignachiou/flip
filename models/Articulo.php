@@ -35,10 +35,10 @@ class Articulo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [[ 'titulo_articulo', 'autor_articulo', 'resumen_articulo', 'desc1', 'desc2', 'desc3', 'desc4'], 'required'],
-            [['id_revista','pagina'], 'integer'],
-            [['titulo_articulo', 'autor_articulo', 'desc1', 'desc2', 'desc3', 'desc4', 'url_revista'], 'string', 'max' => 50],
-            [['resumen_articulo'], 'string', 'max' => 300]
+            [[ 'titulo_articulo', 'autor_articulo', 'desc1', 'desc2','pagina'], 'required', 'message' => 'Campo requerido'],
+            [['id_revista','pagina'], 'integer', 'message' => 'solo se aceptan numeros'],
+            [['titulo_articulo', 'autor_articulo', 'desc1', 'desc2', 'desc3', 'desc4', 'url_revista'], 'string', 'max' => 500],
+            [['resumen_articulo'], 'string', 'max' => 1000]
         ];
     }
 
@@ -58,6 +58,7 @@ class Articulo extends \yii\db\ActiveRecord
             'desc3' => 'Descriptor 3',
             'desc4' => 'Descriptor 4',
         	'pagina' => 'Pagina del Articulo'
+        		
         ];
     }
 

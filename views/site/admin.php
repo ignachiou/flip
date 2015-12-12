@@ -8,7 +8,10 @@ use yii\widgets\LinkPager;
 
 
 
-<?php $f = ActiveForm::begin([
+<?php 
+	$this->title = 'Administrador';
+	
+	$f = ActiveForm::begin([
 		"method" => "get",
 		"action" => Url::toRoute("site/admin"),
 		"enableClientValidation" => true,
@@ -19,7 +22,7 @@ use yii\widgets\LinkPager;
 	<center><?= $f->field($form, "q")->input("buscar")?></center> 
 </div>
 
-<center><?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?></center>
+<center><?= Html::submitButton("Buscar", ["class" => "btn btn-default"])?></center>
 
 <?php $f->end() ?>
 
@@ -56,17 +59,17 @@ use yii\widgets\LinkPager;
                       <div class="modal-dialog">
                             <div class="modal-content">
                               <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
                                     <h4 class="modal-title">Eliminar Usuario</h4>
                               </div>
                               <div class="modal-body">
-                                    <p>Realmente deseas eliminar el Usuario con ID <?= $row->id ?>?</p>
+                                    <p>Â¿Realmente deseas eliminar el Usuario <?= $row->usuario ?> con ID <?= $row->id ?>?</p>
                               </div>
                               <div class="modal-footer">
                               <?= Html::beginForm(Url::toRoute("site/eliminarusuario"), "POST") ?>
                                     <input type="hidden" name="id" value="<?= $row->id ?>">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Eliminar</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
                               <?= Html::endForm() ?>
                               </div>
                             </div><!-- /.modal-content -->

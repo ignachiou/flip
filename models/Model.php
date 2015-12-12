@@ -6,14 +6,6 @@ use yii\helpers\ArrayHelper;
 
 class Model extends \yii\base\Model
 {
-	/**
-	 * Creates and populates a set of models.
-	 *
-	 * @param string $modelClass
-	 * @param array $multipleModels
-	 * @return array
-	 */
-	
 	
 	public static function createMultiple($modelClass, $multipleModels = null)
 	{

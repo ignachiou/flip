@@ -2,6 +2,20 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use app\controllers\SiteController;
+use yii\bootstrap\Nav;
+use yii\bootstrap\NavBar;
+use yii\widgets\Breadcrumbs;
+use app\assets\AppAsset;
+use app\models\Pagina;
+use app\models\Objeto;
+
+/* @var $this \yii\web\View */
+/* @var $content string */
+
+AppAsset::register($this);
+
+$this->title= "Visualizador de páginas"
 ?>
 <!doctype html>
 <!--[if lt IE 7 ]> <html lang="en" class="ie6"> <![endif]-->
@@ -11,26 +25,131 @@ use yii\helpers\Url;
 <!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
 <head>
 <title>Visualizador</title>
-<meta name="viewport" content="width = 1050, user-scalable = no" />
-<script type="text/javascript" src="prueba/PdfFlipper01/PdfFlipper/turnjs4/extras/jquery.min.1.7.js"></script>
-<script type="text/javascript" src="prueba/PdfFlipper01/PdfFlipper/turnjs4/extras/modernizr.2.5.3.min.js"></script>
-<script type="text/javascript" src="prueba/PdfFlipper01/PdfFlipper/turnjs4/lib/hash.js"></script>
+<meta name="viewport" content="width = device-width, user-scalable = no" />
+<script type="text/javascript" src="js/jquery.min.1.7.js"></script>
+<script type="text/javascript" src="js/modernizr.2.5.3.min.js"></script>
+<script type="text/javascript" src="js/hash.js"></script>
+<script type="text/javascript" src="js/movilpage.js"></script>
+
 
 </head>
-<body>
+<body onhashchange="changePart()">
 
 <?php 
-$id = Html::encode($_GET["id_objeto"]);  #Variable que obtengo a traves de un GET, me pasa el id del objeto a consultar
-$dire = html::encode($_GET["url"]);  #Varible que obtengo a traves de un GET, me pasa la URL de las imagenes almacenadas
+//Informacion de lasmonografias.
+	if(isset($_GET["id_objeto"])){
+		$id = Html::encode($_GET["id_objeto"]);  #Variable que obtengo a traves de un GET, me pasa el id del objeto a consultar
+		$ejemplo = Pagina::find()
+			->where(['dependencia' => $id])
+			->all();
+	}
+	if(isset($_GET["url"])){
+		$dire = html::encode($_GET["url"]);  #Varible que obtengo a traves de un GET, me pasa la URL de las imagenes almacenadas
+	}
+	if(isset($_GET["nombre"])){
+		$nombre = html::encode($_GET["nombre"]);
+	}
+	if(isset($_GET["editorial"])){
+		$editorial = html::encode($_GET["editorial"]);
+	}
+	if(isset($_GET["autor"])){
+		$autor = html::encode($_GET["autor"]);
+	}
+	if(isset($_GET["isbn"])){
+		$isbn = html::encode($_GET["isbn"]);
+	}
+
+//información de las tesis
+	if(isset($_GET["id_tesis"])){
+		$id = Html::encode($_GET["id_tesis"]);  #Variable que obtengo a traves de un GET, me pasa el id del objeto a consultar
+		$ejemplo = Pagina::find()
+		->where(['tesis' => $id])
+		->all();
+	}
+	if(isset($_GET["url"])){
+		$dire = html::encode($_GET["url"]);  #Varible que obtengo a traves de un GET, me pasa la URL de las imagenes almacenadas
+	}
+	if(isset($_GET["titulo_tesis"])){
+		$titulo_tesis = html::encode($_GET["titulo_tesis"]);
+	}
+	if(isset($_GET["redactor"])){
+		$redactor = html::encode($_GET["redactor"]);
+	}
+	if(isset($_GET["tutor"])){
+		$tutor = html::encode($_GET["tutor"]);
+	}
+	if(isset($_GET["universidad"])){
+		$universidad = html::encode($_GET["universidad"]);
+	}
+	if(isset($_GET["fecha_tesis"])){
+		$fecha = html::encode($_GET["fecha_tesis"]);
+	}
+
+
+
+//Informacion de las Revistas
+	if(isset($_GET["id_revista"])){
+		$id = Html::encode($_GET["id_revista"]);  #Variable que obtengo a traves de un GET, me pasa el id del objeto a consultar
+		$ejemplo = Pagina::find()
+		->where(['publicaciones' => $id])
+		->all();
+	}	
+	if(isset($_GET["url_revista"])){
+		$dire = html::encode($_GET["url_revista"]);  #Varible que obtengo a traves de un GET, me pasa la URL de las imagenes almacenadas
+	}
+	if(isset($_GET["titulo_revista"])){
+		$titulo_revista = html::encode($_GET["titulo_revista"]);
+	}
+	if(isset($_GET["editorial_revista"])){
+		$editorial_revista = html::encode($_GET["editorial_revista"]);
+	}
+	if(isset($_GET["fecha"])){
+		$fecha = html::encode($_GET["fecha"]);
+	}
+	if(isset($_GET["issn"])){
+		$issn = html::encode($_GET["issn"]);
+	}
+	if(isset($_GET["periodicidad"])){
+		$periodicidad = html::encode($_GET["periodicidad"]);
+	}
+
+//Informacion de los articulos
+
+	if(isset($_GET["id"])){
+		$id = Html::encode($_GET["id"]);  #Variable que obtengo a traves de un GET, me pasa el id del objeto a consultar
+		$ejemplo = Pagina::find()
+		->where(['publicaciones' => $id])
+		->all();
+	}
+	
+	if(isset($_GET["tituloar"])){
+		$tituloar = html::encode($_GET["tituloar"]);
+	}
+	if(isset($_GET["autor_articulo"])){
+		$autor_articulo = html::encode($_GET["autor_articulo"]);
+	}
 ?>
 
 <?php
 header('Content-type: text/html; charset=utf-8');
- 
-$path = $dire.$id."/"; # Directorio donde están las imágenes
+if(isset($_GET["url"])){ 
+	$path = $dire.$id."/"; # Directorio donde están las imágenes
+}
+if(isset($_GET["url_revista"])){
+	$path = $dire;
+}
 $total = null;
+//*******************************************************************
+//se almacena la informacion extraida a traves de un query sobre las paginas
+foreach ($ejemplo as $i => $ejm)
+{
+	$descripcion[] = $ejm->descripcion ;
+	$direccion[] = $ejm->url;
+		
+}
 
-# Comprobamos si es un directorio y si lo es nos movemos a el
+//****************************************************************************
+# Comprobamos si es un directorio y si lo es nos movemos a él
 if (is_dir($path)){
 	$dir = opendir($path);
 	
@@ -38,86 +157,215 @@ if (is_dir($path)){
 	# sea jpg, gif y png y la guardamos en una lista
 	while (false !== ($file = readdir($dir))) {
 		if (preg_match("#([a-zA-Z0-9_\-\s]+)\.(gif|GIF|jpg|JPG|png|PNG)#is",$file)){
-			$list[] = $file;
-			#echo '<img src="'.$path."/".$file.'">.<br />'; //para mostrar las imagenes insertadas			
+			$list[] = $file;		
 		}
 	}
 	# Cerramos el directorio
 	closedir($dir);
 	# Ordenamos la lista
 	$orden = sort ($list,1);
-	#almacenamos la cantidad de imagenes que existen	
+	#contamos la cantidad de imagenes que existen en el array
 	$total = count($list);
 	
-	//echo "<font color='#ff0000'>soy el alkjsfa &ntilde;</font>";	
-	
+	for($i=0; $i<$total; $i++){
+		
+		$check[$i] = strstr($direccion[$i], '.', true); // se abstrae la cadena que esta antes del .jpg
+		
+		
+		}
 	}else{
-		echo "$path no es un directorio";
+		echo "$path no es un directorio";	
+		
 	}
 	?>
+	
 
 <div id="canvas" >
-<font color="white">sdfsd</font>
-<div class="zoom-icon zoom-icon-in"></div>
 
-<div class="magazine-viewport"  style="overflow:auto; position: absolute; left:117px; top:-39px; background-color:#ffffff;  width:100%; height:100%;" >
+	<div id="containerNegro">
 
-<div class="container" >
-	<font color="black">sdfsddsdfsdf</font>
-		<div class="magazine" >
-			<!-- Next button -->
-			<div ignore="1" class="next-button"></div>
-			<!-- Previous button -->
-			<div ignore="1" class="previous-button"></div>
-		</div>
-	</div>	
-</div>
-</div>
-
-<div id="contenedorNegro" style="background-color:#000; width:230px; position: absolute; top: 50px; left:0px; height: 595px;">
-
-  <div id="contenedorBiblio" style="background-color:#aaaaaa;  position: absolute; top:315px; left:0px; height: 300px; width:230px;">
-  	<div id="titlePageBiblio" style="background-color:#2E2E2E; height: 30px;">
-			<font color="white">Bibliografia</font>
-		</div>
-  	
-  </div>
-  <div id="contenedorPages" style="background-color:#aaaaaa;  position: absolute; top:0px; left:0px; height: 300px; width:230px;">
-	<div id="titlePageBox">
-		<div id="titlePageHeader" style="background-color:#2E2E2E; height: 30px;">
-			<font color="white">P&aacute;ginas</font>
-		</div>
-			
-			<div id="pageListDiv" style="position: absolute; left:5px; top: 40px; bottom: 30px; height: 200px; overflow: auto; background-color: #ffffff;
-			border: solid 1px rgb(98, 131, 82); blackground-color: rgb(255, 255, 255);">
-				<table cellpadding="1" id="pageListTable" cellspacing="0" border="0" width="200px">
-					<tbody>
-						<?php 
-						for($i=0; $i<$total; $i++)
-						{							
-						?>
-						<tr>						
-							<td style="width: 200px; cursor: pointer"; bgcolor="#ffffff" onmouseover="this.style.cursor='pointer';" >
-								<a id="pageSelect"  href="#<?php echo $path; ?><?php echo $i+1?>"> Pagina <?php echo $i+1;?></a>
-							</td>
-														
-						</tr>	
-						<?php 
-							}
-							?>	
-					</tbody>					
-				</table>
-			
+  		<div id="containerBiblio">
+  			<div id="titlePageBiblio" >
+				<font color="white">Información Bibliográfica</font>
 			</div>
+			<?php if(isset($nombre)? $nombre:null)
+		{		
+		?>
+  			<b>Nombre:</b><br>
+  			<?php echo $nombre; ?><br>
+  			<?php }?>
+  			<?php if(isset($autor)? $autor:null)
+		{		
+		?>
+  			<b>Autor:</b><br>
+  			<?php echo $autor; ?><br>
+  			<?php }?>
+  			<?php if(isset($editorial)? $editorial:null)
+		{		
+		?>
+  			<b>Editorial:</b><br>
+  			<?php echo $editorial;?><br>
+  			<?php }?>
+  			<?php if(isset($isbn)? $isbn:null)
+		{		
+		?>
+  			<b>Isnb:</b><br>
+  			<?php echo $isbn;?>
+  			<?php }?>
+  			
+  			
+  			
+  		<?php if(isset($titulo_tesis)? $titulo_tesis:null)
+		{		
+		?>
+		 <b> Titulo:</b><br> <?php echo $titulo_tesis;?><br>
+		 <?php }?>
+		  <?php if(isset($redactor)? $redactor:null)
+		{		
+		?>
+ 		 <b> Redactor:</b><br> <?php echo $redactor;?><br>
+ 		 <?php }?>
+ 		 <?php if(isset($tutor)? $tutor:null)
+		{		
+		?>
+  		 <b> Tutor:</b><br><?php echo $tutor;?><br>
+  		 <?php }?>
+  		 <?php if(isset($universidad)? $universidad:null)
+		{		
+		?>
+  		 <b> Universidad:</b><br> <?php echo $universidad;?><br>
+  		 <?php }?>
+  		 <?php if(isset($fecha_tesis)? $fecha_tesis:null)
+		{		
+		?>
+  		 <b> Fecha:</b><br> <?php echo $fecha_tesis;?>
+  		 <?php }?>
+  		 
+  		 
+  			
+  	<?php if(isset($titulo_revista)? $titulo_revista:null)
+		{		
+		?>
+		<b> Nombre:</b><br> <?php echo $titulo_revista;?><br>
+	<?php }?>
+	
+	<?php if(isset($editorial_revista)? $editorial_revista:null)
+	{	
+	?>
+		<b> Editorial:</b><br> <?php echo $editorial_revista;?><br>
+	<?php }?>
+	
+	<?php if(isset($fecha)? $fecha:null)
+	{
+		?>
+		<b> Fecha:</b><br> <?php echo $fecha;?><br>
+	<?php }?>
+	
+	<?php if(isset($issn)? $issn:null)
+	{
+		?>	
+		<b> Issn:</b><br> <?php echo $issn;?><br>
+	<?php }?>
+	
+	<?php if(isset($periodicidad)? $periodicidad:null)
+	{
+		?>	
+		<b> Periodicidad:</b><br> <?php echo $periodicidad;?>
+  	<?php }?>
+  	
+	
+	
+	<?php if(isset($tituloar)? $tituloar:null)
+		{		
+		?>
+		<b> Nombre del Articulo:</b><br> <?php echo $tituloar;?><br>
+	<?php }?>
+	
+	<?php if(isset($autor_articulo)? $autor_articulo:null)
+		{		
+		?>
+		<b> Autor:</b><br> <?php echo $autor_articulo;?><br>
+	<?php }?>
+	
+	
+  		</div>
+  
+  		<div id="contenedorPages">
+			<div id="titlePageBox">
+				<div id="titlePagePaginas" style="background-color:#2E2E2E; height: 30px;">
+					<font color="white">Páginas</font>
+				</div>
+			
+				<div id="pageListDiv">
+					<table cellpadding="1" id="pageListTable" cellspacing="0" border="0" width="100%">
+						<tbody>
+							<?php 
+								for($i=0; $i<$total; $i++)
+								{							
+							?>
+							<tr>						
+								<td style="width: 200px; cursor: pointer"; bgcolor="#ffffff" onmouseover="this.style.cursor='pointer';" >
+									<b><a id="pageSelect" href="#<?php echo $check[$i]?>"> <?php echo $descripcion[$i];?></a></b>
+								</td>
+														
+							</tr>	
+							<?php 
+								}
+							?>	
+						</tbody>					
+					</table>			
+				</div>
 		
+		</div>
+		<?php if (!Yii::$app->user->isGuest) {
+          	#Contenido visible únicamente para usuarios logeados
+    	 ?>	
+		<div id="linking"> 
+			Descargar Página: <br>
+			<a href="sdf"; download=""; onclick="changePart();" id="link" style="position: absolute; bottom:-20px; left:5px;" ></a>
+	
+		</div>
+		<?php  } else {
+         	 # Contenido para el resto de visitas (o usuarios no conectados)
+      	} 
+		?>
+  		</div>
 	</div>
-  </div>
+
+	<font color="white">sdfsd</font>
+	<div class="zoom-icon zoom-icon-in"></div>
+
+	<div class="magazine-viewport"  >
+
+		<div class="container" >
+			<font color="black">SSalvatierra</font>
+			<div class="magazine" >
+				<!-- Next button -->
+				<div ignore="1" class="next-button"></div>
+				<!-- Previous button -->
+				<div ignore="1" class="previous-button"></div>
+			</div>
+		</div>	
+	</div>
 </div>
+
+
+
+<script>
+	var newDire;
+    function changePart() {    	//usamos el location.hash para registrar cambios es los anclas hash y las imprimimos.
+    	var x = location.hash.substring(1);
+    	var newDire = document.getElementById("link").innerHTML =  x + ".jpg"; //almaceno la direccion donde se encuentra la imagen.
+   		document.getElementById("link").download = newDire ; //descarga la imagen directamente al presionar el ancher.
+   		document.getElementById("link").href = newDire;		//esto me crea el link a la imagen para proceder a descargarla.
+    	document.getElementById("link").innerHTML =  x;
+}
+
+</script>
+
 
 <script type="text/javascript">
-
-
-							
+														
 
 function addPage(page, book) {
 
@@ -129,8 +377,7 @@ function addPage(page, book) {
 	// Agregar la pagina al flip
 	if (book.turn('addPage', element, page)) {
 
-		// Add the initial HTML
-		// It will contain a loader indicator and a gradient
+		
 		element.html('<div class="gradient"></div><div class="loader"></div>');
 
 		// Cargar la Pagina
@@ -139,9 +386,13 @@ function addPage(page, book) {
 
 }
 
+
+
+
+
 function loadPage(page, pageElement) {
 
-	// Create an image element
+	// crea el elemento imagen
 
 	var img = $('<img />');
 
@@ -151,25 +402,26 @@ function loadPage(page, pageElement) {
 
 	img.load(function() {
 		
-		// Set the size
+		// colocamos el tamaño de la imagen
 		$(this).css({width: '100%', height: '100%'});
 
 		// Add the image to the page after loaded
 
 		$(this).appendTo(pageElement);
 
-		// Remove the loader indicator
+		// removemos el indicador de carga
 		
 		pageElement.find('.loader').remove();
 	});
 
-	// Load the page
+	// cargamos la pagina
 
 	img.attr('src', '<?php  echo $path?>' +  page + '.jpg');
 
 	loadRegions(page, pageElement);
 
 }
+
 
 // Zoom in / Zoom out
 
@@ -189,7 +441,7 @@ function zoomTo(event) {
 
 }
 
-// Load regions
+// cargamos las regiones
 
 function loadRegions(page, element) {
 
@@ -202,7 +454,7 @@ function loadRegions(page, element) {
 		});
 }
 
-// Add region
+// agregamos las regiones
 
 function addRegion(region, pageElement) {
 	
@@ -222,7 +474,7 @@ function addRegion(region, pageElement) {
 	reg.appendTo(pageElement);
 }
 
-// Process click on a region
+// procesamos el click sobre las regiones
 
 function regionClick(event) {
 
@@ -244,7 +496,7 @@ function regionClick(event) {
 
 }
 
-// Process the data of every region
+// procesamos la información de las regiones
 
 function processRegion(region, regionType) {
 
@@ -277,7 +529,7 @@ function processRegion(region, regionType) {
 
 }
 
-// Load large page
+// cargamos paginas largas
 
 function loadLargePage(page, pageElement) {
 	
@@ -292,12 +544,12 @@ function loadLargePage(page, pageElement) {
 		
 	});
 
-	// Loadnew page
+	// carga la nueva pagina
 	
 	img.attr('src', '<?php  echo $path?>' +  page + '.jpg');
 }
 
-// Load small page
+// cargamos paginas pequeñas
 
 function loadSmallPage(page, pageElement) {
 	
@@ -306,7 +558,7 @@ function loadSmallPage(page, pageElement) {
 	img.css({width: '100%', height: '100%'});
 
 	img.unbind('load');
-	// Loadnew page
+	// cargamos nueva página
 
 	img.attr('src', '<?php  echo $path?>' +  page + '.jpg');
 }
@@ -331,7 +583,7 @@ function disableControls(page) {
 			$('.next-button').show();
 }
 
-// Set the width and height for the viewport
+// se coloca el ancho y alto del viewport
 
 function resizeViewport() {
 
@@ -395,13 +647,13 @@ function resizeViewport() {
 }
 
 
-// Number of views in a flipbook
+// cantidad de vistas en el flip
 
 function numberOfViews(book) {
 	return book.turn('pages') / 2 + 1;
 }
 
-// Current view in a flipbook
+// vista actual
 
 function getViewNumber(book, page) {
 	return parseInt((page || book.turn('page'))/2 + 1, 10);
@@ -451,7 +703,7 @@ function setPreview(view) {
 	});
 }
 
-// que tan profundo es el zoom in
+// profundidad del zoom in
 
 function largeMagazineWidth() {
 	
@@ -459,7 +711,7 @@ function largeMagazineWidth() {
 
 }
 
-// decode URL Parameters
+// parametros URL
 
 function decodeParams(data) {
 
@@ -473,7 +725,7 @@ function decodeParams(data) {
 	return obj;
 }
 
-// Calculate the width and height of a square within another square
+// calculamos el ancho y largo de cada bloque
 
 function calculateBound(d) {
 	
@@ -506,51 +758,51 @@ function loadApp() {
 
  	var flipbook = $('.magazine');
 
- 	// Check if the CSS was already loaded
+ 	// verificamos que el css haya sido cargado
 	
 	if (flipbook.width()==0 || flipbook.height()==0) {
 		setTimeout(loadApp, 10);
 		return;
 	}
 	
-	// Create the flipbook
+	// creamos el flip
 
 	flipbook.turn({
 			
-			// Magazine width
+			// ancho del flip
 
 			width: 922,
 
-			// Magazine height
+			// altura del flipt
 
 			height: 600,
 
-			// Duration in millisecond
+			// msegundos que dura en cambiar la pagina 
 
 			duration: 1000,
 
-			// Hardware acceleration
+			// para uso fuera de chrome
 
 			acceleration: !isChrome(),
 
-			// Enables gradients
+			// habilita el gradiente
 
 			gradients: true,
 			
-			// Auto center this flipbook
+			// centra solo el flip
 
 			autoCenter: true,
 
-			// Elevation from the edge of the flipbook when turning a page
+			// elavacion de cada esquina del flip
 
 			elevation: 50,
 
-			// The number of pages
+			// numero de paginas del flip
 
 			pages: <?php echo $total?>,
 
 		
-			// Events
+			// eventos:
 
 			when: {
 				turning: function(event, page, view) {
@@ -561,7 +813,7 @@ function loadApp() {
 			
 					// Actualizar la URI
 
-					Hash.go('<?php  echo $path?>' + page).update();
+					Hash.go('<?php  echo $path?>' + page ).update();
 
 					// Mostrar o esconder los botones de navegacion
 
@@ -594,7 +846,7 @@ function loadApp() {
 
 				missing: function (event, pages) {
 
-					// agregar paginas que no estan en el flip
+					// agregar paginas que no estan en el flip si asi es
 
 					for (var i = 0; i < pages.length; i++)
 						addPage(pages[i], $(this));
@@ -651,7 +903,7 @@ function loadApp() {
 					escTip = true;
 
 					$('<div />', {'class': 'exit-message'}).
-						html('<div>Press ESC to exit</div>').
+						html('<div>Preciona ESC para alejar</div>').
 							appendTo($('body')).
 							delay(2000).
 							animate({opacity:0}, 500, function() {
@@ -676,7 +928,7 @@ function loadApp() {
 		}
 	});
 
-	// Zoom event
+	// evento del zoom
 
 	if ($.isTouch)
 		$('.magazine-viewport').bind('zoom.doubleTap', zoomTo);
@@ -684,7 +936,7 @@ function loadApp() {
 		$('.magazine-viewport').bind('zoom.tap', zoomTo);
 
 
-	// Using arrow keys to turn the page
+	// configuracion de las teclas para el cambio de paginas
 
 	$(document).keydown(function(e){
 
@@ -693,14 +945,14 @@ function loadApp() {
 		switch (e.keyCode) {
 			case previous:
 
-				// left arrow
+				// flecha izquierda
 				$('.magazine').turn('previous');
 				e.preventDefault();
 
 			break;
 			case next:
 
-				//right arrow
+				//flecha derecha
 				$('.magazine').turn('next');
 				e.preventDefault();
 
@@ -714,9 +966,9 @@ function loadApp() {
 		}
 	});
 
-	// URIs - Format #$path/1 
+	// URIs - Formato #$path/1 
 
-	Hash.on('<?php  echo $path?>([0-9]*)$', {
+	Hash.on('<?php  echo $path?>([a-zA-Z0-9]*)$', {
 		yep: function(path, parts) {
 			var page = parts[1];
 
@@ -740,57 +992,8 @@ function loadApp() {
 		resizeViewport();
 	});
 
-	// Events for thumbnails
 
-	$('.thumbnails').click(function(event) {
-		
-		var page;
-
-		if (event.target && (page=/page-([0-9]+)/.exec($(event.target).attr('class'))) ) {
-		
-			$('.magazine').turn('page', page[1]);
-		}
-	});
-
-	$('.thumbnails li').
-		bind($.mouseEvents.over, function() {
-			
-			$(this).addClass('thumb-hover');
-
-		}).bind($.mouseEvents.out, function() {
-			
-			$(this).removeClass('thumb-hover');
-
-		});
-
-	if ($.isTouch) {
-	
-		$('.thumbnails').
-			addClass('thumbanils-touch').
-			bind($.mouseEvents.move, function(event) {
-				event.preventDefault();
-			});
-
-	} else {
-
-		$('.thumbnails ul').mouseover(function() {
-
-			$('.thumbnails').addClass('thumbnails-hover');
-
-		}).mousedown(function() {
-
-			return false;
-
-		}).mouseout(function() {
-
-			$('.thumbnails').removeClass('thumbnails-hover');
-
-		});
-
-	}
-
-
-	// Regions
+	// Regiones
 
 	if ($.isTouch) {
 		$('.magazine').bind('touchstart', regionClick);
@@ -798,7 +1001,7 @@ function loadApp() {
 		$('.magazine').click(regionClick);
 	}
 
-	// Events for the next button
+	// Evento de boton lateral
 
 	$('.next-button').bind($.mouseEvents.over, function() {
 		
@@ -853,43 +1056,13 @@ function loadApp() {
 
 }
 
-// Zoom icon
-
- $('.zoom-icon').bind('mouseover', function() { 
- 	
- 	if ($(this).hasClass('zoom-icon-in'))
- 		$(this).addClass('zoom-icon-in-hover');
-
- 	if ($(this).hasClass('zoom-icon-out'))
- 		$(this).addClass('zoom-icon-out-hover');
- 
- }).bind('mouseout', function() { 
- 	
- 	 if ($(this).hasClass('zoom-icon-in'))
- 		$(this).removeClass('zoom-icon-in-hover');
- 	
- 	if ($(this).hasClass('zoom-icon-out'))
- 		$(this).removeClass('zoom-icon-out-hover');
-
- }).bind('click', function() {
-
- 	if ($(this).hasClass('zoom-icon-in'))
- 		$('.magazine-viewport').zoom('zoomIn');
- 	else if ($(this).hasClass('zoom-icon-out'))	
-		$('.magazine-viewport').zoom('zoomOut');
-
- });
-
- $('#canvas').hide();
-
-
 // Load the HTML4 version if there's not CSS transform
 
 yepnope({
 	test : Modernizr.csstransforms,
-	yep: ['prueba/PdfFlipper01/PdfFlipper/turnjs4/lib/turn.js'],
-	nope: ['prueba/PdfFlipper01/PdfFlipper/turnjs4/lib/turn.html4.min.js'],
-	both: ['prueba/PdfFlipper01/PdfFlipper/turnjs4/lib/zoom.min.js', 'prueba/PdfFlipper01/PdfFlipper/turnjs4/samples/magazine/js/magazine.js', 'prueba/PdfFlipper01/PdfFlipper/turnjs4/samples/magazine/css/magazine.css'],
+	yep: ['js/turn.js'],
+	nope: ['js/turn.html4.min.js'],
+	both: ['js/zoom.min.js', 'js/magazine.js', 'css/magazine.css'],
 	complete: loadApp
 });
 

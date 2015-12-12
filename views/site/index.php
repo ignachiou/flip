@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\data\Pagination;
 use yii\widgets\LinkPager; 
-use yii\base\model;
+use yii\base\Model;
 ?>
 <!DOCTYPE html>
 <head>
@@ -19,33 +19,24 @@ $this->title = 'Bibliotheca';
 <div id="index" class="site-index">
 		<br>
 		<br>
-		<center><img WIDTH=450, HEIGTH=300 align=center src="imagenes/gif/big_logo.png"></center>
+		<center><img class="frontImage"  src="imagenes/gif/big_logo.png"></center>
 	
     <div class="jumbotron"> 
-        
+            
+        <?php $form = ActiveForm::begin([
+        'action' => ['objeto/index'],
+        'method' => 'get',
+    ]); ?>
 
-        
-        <?php $f = ActiveForm::begin([  
-		"method" => "get",
-		"action" => Url::toRoute("site/simple"),
-		"enableClientValidation" => true,
-		]);
-		?>
-		
-		
-   	       
+    	<center>
+       <?= $form->field($searchModel, 'busquedag') ?>
+	</center>
+	
     <div class="form-group">
-	<?= $f->field($form, "m")->input("buscar")?> 
-	</div>
-	
-	
-<?= Html::submitButton("Buscar", ["class" => "btn btn-primary
-		"])?>
+        <center><?= Html::submitButton('Buscar', ['class' => 'btn btn-default']) ?></center>
+    </div>
 
-<?php $f->end() ?>
-
-<h3><?= $search ?></h3>
-
+    <?php ActiveForm::end(); ?>
         
     </div>
 

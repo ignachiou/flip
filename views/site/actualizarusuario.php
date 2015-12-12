@@ -31,8 +31,13 @@ use yii\helpers\Url;
  <?= $form->field($model, "rol")->input("text") ?>   
 </div>
 
+<h5>Tips: recordar que los valores de rol van del 1 al 3, donde:<br>
+	1=Usuario Registrado<br>
+	2=Usuario Catalogador(crear,modificar o eliminar objetos)<br>
+	3=Super Usuario(modifica o elimina usuarios)
+</h5>
 
-<?= Html::submitButton("Actualizar", ["class" => "btn btn-primary"]) ?>
+<?= Html::submitButton("Actualizar", ["class" => "btn btn-success"]) ?>
 
 <?php $form->end() ?>
 

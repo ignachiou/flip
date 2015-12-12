@@ -7,38 +7,33 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Articulo;
 
-/**
- * ArticuloSearch represents the model behind the search form about `app\models\Articulo`.
- */
+
 class ArticuloSearch extends Articulo
 {
-    /**
-     * @inheritdoc
-     */
+    public $busquedag;
+	
     public function rules()
     {
         return [
             [['id_articulo', 'id_revista'], 'integer'],
-            [['titulo_articulo', 'autor_articulo', 'resumen_articulo', 'desc1', 'desc2', 'desc3', 'desc4', 'url_revista', 'pagina'], 'safe'],
+            [['titulo_articulo', 'autor_articulo', 'resumen_articulo', 'desc1', 'desc2', 'desc3', 'desc4', 'url_revista', 'pagina','busquedag'], 'safe'],
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
+    public function attributeLabels(){
+    	
+    	return [
+			'busquedag' => 'Buscar Articulo',
+    	];
+    }
+    
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
-    /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
-     * @return ActiveDataProvider
-     */
+    
     public function search($params)
     {
         $query = Articulo::find();
@@ -63,10 +58,19 @@ class ArticuloSearch extends Articulo
         $query->andFilterWhere(['like', 'titulo_articulo', $this->titulo_articulo])
             ->andFilterWhere(['like', 'autor_articulo', $this->autor_articulo])
             ->andFilterWhere(['like', 'resumen_articulo', $this->resumen_articulo])
+            ->andFilterWhere(['like', 'url_revista', $this->url_revista])
             ->andFilterWhere(['like', 'desc1', $this->desc1])
             ->andFilterWhere(['like', 'desc2', $this->desc2])
             ->andFilterWhere(['like', 'desc3', $this->desc3])
-            ->andFilterWhere(['like', 'desc4', $this->desc4]);
+            ->andFilterWhere(['like', 'desc4', $this->desc4])
+        	->orFilterWhere(['like', 'titulo_articulo', $this->busquedag])
+            ->orFilterWhere(['like', 'autor_articulo', $this->busquedag])
+            ->orFilterWhere(['like', 'resumen_articulo', $this->busquedag])
+            ->orFilterWhere(['like', 'url_articulo', $this->busquedag])
+            ->orFilterWhere(['like', 'desc1', $this->busquedag])
+            ->orFilterWhere(['like', 'desc2', $this->busquedag])
+            ->orFilterWhere(['like', 'desc3', $this->busquedag])
+            ->orFilterWhere(['like', 'desc4', $this->busquedag]);
 
         return $dataProvider;
     }

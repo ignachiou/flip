@@ -14,27 +14,23 @@ $this->title = 'Bibliotheca';
 <div class="site-index">
 		<br>
 		<br>
-		<center><img WIDTH=450, HEIGTH=300 align=center src="imagenes/gif/big_logo.png"></center>
+		<center><img class="frontImage" src="imagenes/gif/big_logo.png"></center>
     <div class="jumbotron">
         
+   <?php $form = ActiveForm::begin([
+        'action' => ['revista/index'],
+        'method' => 'get',
+    ]); ?>
 
-        
-        <?php $f = ActiveForm::begin([  
-		"method" => "get",
-		"action" => Url::toRoute("site/publicaciones"),
-		"enableClientValidation" => true,
-]);
-?>
-   	       
+    	<center>
+       <?= $form->field($searchModel, 'busquedag') ?>
+	</center>
+	
     <div class="form-group">
-	<?= $f->field($form, "p")->input("buscar")?> 
-	</div>
+        <center><?= Html::submitButton('Buscar', ['class' => 'btn btn-default']) ?></center>
+    </div>
 
-<?= Html::submitButton("Buscar", ["class" => "btn btn-primary"])?>
-
-<?php $f->end() ?>
-
-<h3><?= $search ?></h3>
+    <?php ActiveForm::end(); ?>
 
        
     </div>

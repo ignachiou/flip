@@ -12,33 +12,31 @@ use app\models\Revista;
  */
 class RevistaSearch extends Revista
 {
-    /**
-     * @inheritdoc
-     */
+    public $busquedag; 
+	
     public function rules()
     {
         return [
             [['id'], 'integer'],
-            [['titulo_revista', 'editorial_revista', 'volumen_revista', 'fasciculo_revista', 'fecha_revista', 'issn_revista', 'periodicidad_revista', 'url_revista', 'desc1', 'desc2', 'desc3', 'desc4'], 'safe'],
+            [['titulo_revista', 'editorial_revista', 'volumen_revista', 'fasciculo_revista', 'fecha_revista', 'issn_revista', 'periodicidad_revista', 'url_revista', 'desc1', 'desc2', 'desc3', 'desc4','busquedag'], 'safe'],
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
+    
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
+    
+    public function attributeLabels(){
+    	
+    	return [
+    		'busquedag' => 'Buscar Publicación',	
+    	];
+    }
 
-    /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
-     * @return ActiveDataProvider
-     */
+    
     public function search($params)
     {
         $query = Revista::find();
@@ -70,7 +68,19 @@ class RevistaSearch extends Revista
             ->andFilterWhere(['like', 'desc1', $this->desc1])
             ->andFilterWhere(['like', 'desc2', $this->desc2])
             ->andFilterWhere(['like', 'desc3', $this->desc3])
-            ->andFilterWhere(['like', 'desc4', $this->desc4]);
+            ->andFilterWhere(['like', 'desc4', $this->desc4])
+        	->orFilterWhere(['like', 'titulo_revista', $this->busquedag])
+            ->orFilterWhere(['like', 'editorial_revista', $this->busquedag])
+            ->orFilterWhere(['like', 'volumen_revista', $this->busquedag])
+            ->orFilterWhere(['like', 'fasciculo_revista', $this->busquedag])
+            ->orFilterWhere(['like', 'fecha_revista', $this->busquedag])
+            ->orFilterWhere(['like', 'issn_revista', $this->busquedag])
+            ->orFilterWhere(['like', 'url_revista', $this->busquedag])
+            ->orFilterWhere(['like', 'periodicidad_revista', $this->busquedag])
+            ->orFilterWhere(['like', 'desc1', $this->busquedag])
+            ->orFilterWhere(['like', 'desc2', $this->busquedag])
+            ->orFilterWhere(['like', 'desc3', $this->busquedag])
+            ->orFilterWhere(['like', 'desc4', $this->busquedag]);
 
         return $dataProvider;
     }

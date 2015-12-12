@@ -2,33 +2,44 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use app\models\User;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\Revista */
-
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Revistas', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = $model->titulo_revista;
 ?>
 <div class="revista-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?php 
+    	if(!Yii::$app->user->isGuest)
+    	{
+    		if(User::isUserAdmin(Yii::$app->user->identity->id) || (User::isUserCatalog(Yii::$app->user->identity->id))){?>
+        		<?= Html::a('Actualizar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        		<?= Html::a('Borrar', ['delete', 'id' => $model->id], [
+           			 'class' => 'btn btn-danger',
+            		'data' => [
+                	'confirm' => '¿Seguro que quieres borrar este objeto?',
+                	'method' => 'post',
+            		],
+        		]) ?>
+        <?php 
+    		}
+    		}?>
+        
+        <?= Html::a('Visualizar', ['site/prueba', 
+        		'id_revista' => $model->id, 
+        		'url_revista' => $model->url_revista,
+        		'titulo_revista' => $model->titulo_revista,
+        		'editorial_revista' => $model->editorial_revista,
+        		'fecha' => $model->fecha_revista,
+        		'issn' =>$model->issn_revista,
+        ], ['class' => 'btn btn-info']) ?>
     </p>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
+            
             'titulo_revista',
             'editorial_revista',
             'volumen_revista',
@@ -36,11 +47,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'fecha_revista',
             'issn_revista',
             'periodicidad_revista',
-            'url_revista:url',
-            'desc1',
-            'desc2',
-            'desc3',
-            'desc4',
+        	'desc1',
+        	'desc2',
+        	'desc3',
+        	'desc4',
+            
         ],
     ]) ?>
 

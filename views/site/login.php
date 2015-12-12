@@ -26,14 +26,18 @@ $this->title = 'Acceso al Sistemas';
     <?= $form->field($model, 'usuario') ?>
 
     <?= $form->field($model, 'clave')->passwordInput() ?>
+    <a href="index.php?r=site%2Frecoverpass">¿se te olvido la clave?</a>
 
     <?= $form->field($model, 'recuerdame', [
         'template' => "<div class=\"col-lg-offset-1 col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
     ])->checkbox() ?>
+    
 
     <div class="form-group">
         <div class="col-lg-offset-1 col-lg-11">
             <?= Html::submitButton('Ingresar', ['class' => 'btn btn-success', 'name' => 'login-button']) ?>
+            
+            
         </div>
     </div>
 

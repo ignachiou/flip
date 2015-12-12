@@ -2,31 +2,44 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\models\User;
+use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $searchModel app\models\ArticuloSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Articulos';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="articulo-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+	
+	
+	<?php $form = ActiveForm::begin([
+        'action' => ['articulo/index'],
+        'method' => 'get',
+    ]); ?>
+
+    	<center>
+       <?= $form->field($searchModel, 'busquedag') ?>
+	</center>
+	
+    <div class="form-group">
+        <center><?= Html::submitButton('Buscar', ['class' => 'btn btn-default']) ?></center>
+    </div>
+
+    <?php ActiveForm::end(); ?>
+
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a('Create Articulo', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
+	<h3><center>Catálogo de Articulos</center></h3>
+	
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+    	'summary' => '',
+    		'emptyText' => 'No hubo resultados',
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id_articulo',
-            'id_revista',
+            
             'titulo_articulo',
             'autor_articulo',
             'resumen_articulo',
@@ -35,7 +48,10 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'desc3',
             // 'desc4',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+            		'template'=>'{view}',
+            		       				           		
+    		], 
         ],
     ]); ?>
 

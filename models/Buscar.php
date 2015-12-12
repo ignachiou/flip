@@ -1,9 +1,9 @@
 <?php
 namespace app\models;
 use Yii;
-use yii\base\model;
+use yii\base\Model;
 
-class Buscar extends model{
+class Buscar extends Model{
 	public $q, $m, $t, $p, $a;
 	
 	public function rules()

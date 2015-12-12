@@ -2,10 +2,10 @@
 
 namespace app\models;
 use Yii;
-use yii\base\model;
+use yii\base\Model;
 use app\models\Usuarios;
 
-class FormAct extends model{
+class FormAct extends Model{
 	
  	public $id;
     public $usuario;
@@ -20,6 +20,7 @@ class FormAct extends model{
         return [
 
         	['rol', 'integer'],
+        	['rol', 'match', 'pattern' => "/^[1,2,3]+$/i", 'message' => 'Sólo los roles 1, 2 o 3'],
         	['id', 'integer', 'message' => 'Id incorrecto'],
             [['usuario', 'email',], 'required', 'message' => 'Campo requerido'],
             ['usuario', 'match', 'pattern' => '/^.{3,50}$/', 'message' => 'Mínimo 3 y máximo 50 caracteres'],
