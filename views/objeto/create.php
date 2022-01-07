@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Objeto */
 
-$this->title = 'Almacenar Monográfia';
+$this->title = 'Guardar Monográfia';
 ?>
 <div class="objeto-create">
 
